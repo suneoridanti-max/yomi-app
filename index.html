@@ -1,5 +1,4 @@
 
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -123,6 +122,34 @@
         #ruby-display.tier-2::before { content: '🟠'; text-shadow: 0 0 8px orange; }
         #ruby-display.tier-3::before { content: '🟡'; text-shadow: 0 0 10px yellow; }
         #ruby-display.tier-4::before { content: '🟢'; text-shadow: 0 0 12px lightgreen; transform: scale(1.2); }
+
+        /* ▼▼▼ ここから修正 ▼▼▼ */
+        #next-stage-info {
+            background-color: #fffaf0; /* 少しクリーム色 */
+            border: 2px solid var(--primary-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px auto;
+            max-width: 500px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        #next-stage-info h2 {
+            margin-top: 0;
+            margin-bottom: 15px;
+            border-bottom: none;
+            font-size: 1.5em;
+        }
+        #next-stage-info p {
+            font-size: 1.1em;
+            margin-bottom: 20px;
+        }
+        #start-next-stage-button {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.3em;
+            background-color: var(--correct-color);
+        }
+        /* ▲▲▲ ここまで修正 ▲▲▲ */
 
         #main-menu-buttons {
             display: grid;
@@ -478,6 +505,13 @@
                     <p id="true-diamond-display">0</p>
                 </div>
             </div>
+            <!-- ▼▼▼ ここから修正 ▼▼▼ -->
+            <div id="next-stage-info" class="hidden">
+                <h2>次の挑戦</h2>
+                <p id="next-stage-text"></p>
+                <button id="start-next-stage-button" class="main-menu-button"></button>
+            </div>
+            <!-- ▲▲▲ ここまで修正 ▲▲▲ -->
             <div id="main-menu-buttons">
                 <button id="go-to-stage-select-button" class="main-menu-button">ステージ選択</button>
                 <button id="go-to-item-exchange-button" class="main-menu-button">アイテム交換</button>
@@ -494,10 +528,8 @@
             <h2>復習ステージ</h2>
             <div id="review-stage-selection-grid"></div>
 
-            <!-- ▼▼▼ ここから改修 ▼▼▼ -->
             <h2>読解復習ステージ</h2>
             <div id="comprehension-review-stage-selection-grid"></div>
-            <!-- ▲▲▲ ここまで改修 ▲▲▲ -->
 
             <h2>ランダム（読み）ステージ</h2>
             <div id="random-stage-selection-container">
@@ -1482,9 +1514,6 @@
 
 
 
-
-
-
         ];
         // ===== ここまで問題データ =====
 
@@ -1494,6 +1523,12 @@
 
     // --- グローバル変数・DOM要素 ---
     const mainMenuScreen = document.getElementById('main-menu-screen');
+    // ▼▼▼ ここから修正 ▼▼▼
+    // メインメニューの「次の挑戦」エリアの要素を取得
+    const nextStageInfo = document.getElementById('next-stage-info');
+    const nextStageText = document.getElementById('next-stage-text');
+    const startNextStageButton = document.getElementById('start-next-stage-button');
+    // ▲▲▲ ここまで修正 ▲▲▲
     const stageSelectScreen = document.getElementById('stage-select-screen');
     const itemExchangeScreen = document.getElementById('item-exchange-screen');
     const exchangeHistoryScreen = document.getElementById('exchange-history-screen');
@@ -1516,9 +1551,7 @@
     const stageSelectionGrid = document.getElementById('stage-selection-grid');
     const testSelectionGrid = document.getElementById('test-selection-grid');
     const reviewStageSelectionGrid = document.getElementById('review-stage-selection-grid');
-    // ▼▼▼ ここから改修 ▼▼▼
     const comprehensionReviewStageSelectionGrid = document.getElementById('comprehension-review-stage-selection-grid');
-    // ▲▲▲ ここまで改修 ▲▲▲
     const rubyDisplay = document.getElementById('ruby-display');
     const sapphireDisplay = document.getElementById('sapphire-display');
     const trueDiamondDisplay = document.getElementById('true-diamond-display');
@@ -1569,9 +1602,7 @@
     let isTestMode = false;
     let isReviewStage = false;
     let isReadingComprehensionStage = false;
-    // ▼▼▼ ここから改修 ▼▼▼
     let isComprehensionReviewStage = false;
-    // ▲▲▲ ここまで改修 ▲▲▲
     let quizAttemptResults = [];
 
     // --- データ管理 ---
@@ -1598,12 +1629,9 @@
             if (typeof playerData.reviewQuestions === 'undefined') {
                 playerData.reviewQuestions = [];
             }
-            // ▼▼▼ ここから改修 ▼▼▼
-            // 読解復習問題用のデータを初期化
             if (typeof playerData.comprehensionReviewQuestions === 'undefined') {
                 playerData.comprehensionReviewQuestions = [];
             }
-            // ▲▲▲ ここまで改修 ▲▲▲
         } else {
             playerData = {
                 totalRubies: 0,
@@ -1614,9 +1642,7 @@
                 testClears: {},
                 exchangeHistory: [],
                 reviewQuestions: [],
-                // ▼▼▼ ここから改修 ▼▼▼
-                comprehensionReviewQuestions: [] // 読解復習問題用のデータを追加
-                // ▲▲▲ ここまで改修 ▲▲▲
+                comprehensionReviewQuestions: []
             };
         }
     }
@@ -1664,11 +1690,9 @@
                         if (typeof importedData.reviewQuestions === 'undefined') {
                             importedData.reviewQuestions = [];
                         }
-                        // ▼▼▼ ここから改修 ▼▼▼
                         if (typeof importedData.comprehensionReviewQuestions === 'undefined') {
                             importedData.comprehensionReviewQuestions = [];
                         }
-                        // ▲▲▲ ここまで改修 ▲▲▲
                         playerData = importedData;
                         saveData();
                         showCustomAlert('データを読み込みました！');
@@ -1745,16 +1769,52 @@
     function showMainMenu() {
         showScreen(mainMenuScreen);
         updateDisplays();
+        // ▼▼▼ ここから修正 ▼▼▼
+        // メインメニューの「次の挑戦」エリアを更新する
+        updateNextStageInfo();
+        // ▲▲▲ ここまで修正 ▲▲▲
     }
+
+    // ▼▼▼ ここから修正 ▼▼▼
+    /** メインメニューの「次の挑戦」エリアを更新する関数 */
+    function updateNextStageInfo() {
+        // クリア済みの通常ステージの番号リストを取得
+        const clearedStages = Object.keys(playerData.stageClears)
+            .filter(id => id.startsWith('stage-') && playerData.stageClears[id] > 0)
+            .map(id => parseInt(id.split('-')[1]));
+
+        let nextStageNumber;
+        if (clearedStages.length === 0) {
+            nextStageNumber = 1; // まだ何もクリアしていない場合はステージ1
+        } else {
+            const maxClearedStage = Math.max(...clearedStages);
+            nextStageNumber = maxClearedStage + 1; // 最後にクリアしたステージの次
+        }
+
+        // 次のステージが存在し、かつアンロックされているかチェック
+        if (nextStageNumber <= gameConfig.totalStages && nextStageNumber <= playerData.unlockedStage) {
+            nextStageInfo.classList.remove('hidden'); // 表示する
+            if (nextStageNumber === 1) {
+                nextStageText.textContent = 'さあ、最初のステージから始めよう！';
+            } else {
+                nextStageText.textContent = `現在、ステージ${nextStageNumber - 1}までクリア済みです。`;
+            }
+            startNextStageButton.textContent = `ステージ ${nextStageNumber} に挑戦する`;
+            // ボタンがクリックされたら、そのステージのクイズを開始する
+            startNextStageButton.onclick = () => startQuiz(`stage-${nextStageNumber}`, false);
+        } else {
+            // 全ステージクリア済み、または次のステージがまだロックされている場合は非表示
+            nextStageInfo.classList.add('hidden');
+        }
+    }
+    // ▲▲▲ ここまで修正 ▲▲▲
 
     function showStageSelect() {
         showScreen(stageSelectScreen);
         updateDisplays();
         createStageButtons();
         createReviewStageButtons();
-        // ▼▼▼ ここから改修 ▼▼▼
         createComprehensionReviewStageButtons();
-        // ▲▲▲ ここまで改修 ▲▲▲
         createTestButtons();
         populateRandomStageSelectors();
         populateReadingComprehensionStageSelectors();
@@ -1898,7 +1958,6 @@
         }
     }
 
-    // ▼▼▼ ここから改修 ▼▼▼
     /** 読解復習ステージのボタンを生成する関数 */
     function createComprehensionReviewStageButtons() {
         comprehensionReviewStageSelectionGrid.innerHTML = '';
@@ -1938,7 +1997,6 @@
             comprehensionReviewStageSelectionGrid.appendChild(p);
         }
     }
-    // ▲▲▲ ここまで改修 ▲▲▲
 
     function createTestButtons() {
         testSelectionGrid.innerHTML = '';
@@ -1983,7 +2041,8 @@
 
     // --- アイテム交換 ---
     const exchangeItems = [
-        { id: 'toca_life_1min', name: 'トッカライフワールド１分', cost: 100, currency: 'ruby', available: true },
+ { id: 'speed_challenge_1', name: 'スピード勝負１回', cost: 30, currency: 'sapphire', available: true },        
+{ id: 'toca_life_1min', name: 'トッカライフワールド１分', cost: 100, currency: 'ruby', available: true },
         { id: 'tosochu_1book', name: '逃走中１冊', cost: 200, currency: 'sapphire', available: true },
         { id: 'foot_massage', name: '足裏マッサージ30秒', cost: 10, currency: 'ruby', available: true },
         { id: 'preppy_pack_ruby', name: 'パーフェクトなプレッピースタイルパック', cost: 150, currency: 'ruby', available: true },
@@ -2135,15 +2194,12 @@
         isRandomStage = stageId.startsWith('random-');
         isTestMode = stageId.startsWith('test-');
         isReviewStage = stageId.startsWith('review-');
-        // ▼▼▼ ここから改修 ▼▼▼
         isComprehensionReviewStage = stageId.startsWith('comprehension-review-');
         isReadingComprehensionStage = stageId.startsWith('reading-comprehension') || isComprehensionReviewStage;
-        // ▲▲▲ ここまで改修 ▲▲▲
 
         if (isRetryMode) {
             currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
         } else if (isReadingComprehensionStage) {
-            // ▼▼▼ ここから改修 ▼▼▼
             let rawQuizData;
              if (isComprehensionReviewStage) {
                 // 読解復習ステージの場合、復習リストから問題を取得
@@ -2193,7 +2249,6 @@
             });
             // 最終的な問題の順番をシャッフル
             currentQuizData = shuffleArray(currentQuizData);
-            // ▲▲▲ ここまで改修 ▲▲▲
 
         } else if (isReviewStage) { 
             const stageNumber = parseInt(stageId.split('-')[1]);
@@ -2613,7 +2668,6 @@
         if (isReadingComprehensionStage) {
             isPerfect = incorrectQuestionsForRetry.length === 0;
 
-            // ▼▼▼ ここから改修 ▼▼▼
             if (isComprehensionReviewStage) { // 読解復習ステージの結果処理
                 gemType = 'sapphire';
                 if (isPerfect) {
@@ -2654,7 +2708,6 @@
                 }
             }
             retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
-            // ▲▲▲ ここまで改修 ▲▲▲
         
         } else if (isReviewStage) {
             if (isPerfect) {
@@ -2992,5 +3045,3 @@
     </script>
 </body>
 </html>
-
-
