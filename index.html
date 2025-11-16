@@ -123,34 +123,6 @@
         #ruby-display.tier-3::before { content: '🟡'; text-shadow: 0 0 10px yellow; }
         #ruby-display.tier-4::before { content: '🟢'; text-shadow: 0 0 12px lightgreen; transform: scale(1.2); }
 
-        /* ▼▼▼ ここから修正 ▼▼▼ */
-        #next-stage-info {
-            background-color: #fffaf0; /* 少しクリーム色 */
-            border: 2px solid var(--primary-color);
-            border-radius: 10px;
-            padding: 20px;
-            margin: 30px auto;
-            max-width: 500px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        #next-stage-info h2 {
-            margin-top: 0;
-            margin-bottom: 15px;
-            border-bottom: none;
-            font-size: 1.5em;
-        }
-        #next-stage-info p {
-            font-size: 1.1em;
-            margin-bottom: 20px;
-        }
-        #start-next-stage-button {
-            width: 100%;
-            padding: 20px;
-            font-size: 1.3em;
-            background-color: var(--correct-color);
-        }
-        /* ▲▲▲ ここまで修正 ▲▲▲ */
-
         #main-menu-buttons {
             display: grid;
             grid-template-columns: 1fr;
@@ -175,15 +147,62 @@
         #go-to-item-exchange-button {
             background-color: var(--correct-color);
         }
+        
+        /* 修正後: 「語彙王への道」の進捗表示スタイルを追加 */
+        #oilyou-progress-container {
+            margin: 20px auto 0;
+            max-width: 400px;
+            text-align: center;
+        }
+        #oilyou-progress-container p {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #333;
+        }
+        .progress-bar-background {
+            width: 100%;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            height: 20px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .progress-bar-foreground {
+            height: 100%;
+            width: 0%; /* JavaScriptで幅を操作します */
+            background: linear-gradient(to right, #76b852, #8DC26F);
+            border-radius: 10px 0 0 10px;
+            transition: width 0.5s ease-in-out;
+        }
+        #oilyou-progress-details {
+            display: flex;
+            justify-content: center;
+            align-items: baseline;
+            gap: 10px;
+            margin-top: 8px;
+        }
+        #oilyou-progress-text {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #28a745;
+        }
+        #oilyou-progress-count {
+            font-size: 0.9em;
+            color: #555;
+            font-weight: bold;
+        }
+
 
         /* ===== ステージ選択画面 ===== */
-        #stage-selection-grid, #test-selection-grid, #review-stage-selection-grid, #comprehension-review-stage-selection-grid { /* 修正: comprehension-review-stage-selection-gridを追加 */
+        #stage-selection-grid, #test-selection-grid, #review-stage-selection-grid, #comprehension-review-stage-selection-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
             gap: 15px;
             margin-top: 20px;
         }
-        #random-stage-selection-container, #reading-comprehension-stage-container {
+        /* 修正前: #random-stage-selection-container のスタイル */
+        /* 修正後: ランダム(読み)ステージのスタイルを削除し、読解ステージ用のスタイルのみ残す */
+        #reading-comprehension-stage-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -212,7 +231,7 @@
             font-size: 1em;
             cursor: pointer;
         }
-        #random-stage-button, #reading-comprehension-stage-button {
+        #reading-comprehension-stage-button {
             width: 100%;
             max-width: 300px;
             margin-top: 10px;
@@ -261,9 +280,6 @@
             color: var(--ruby-color);
             text-shadow: 0 0 3px black;
             letter-spacing: 2px;
-        }
-        #random-stage-button {
-            background-color: var(--correct-color);
         }
         .test-button {
             background-color: var(--test-button-color);
@@ -505,16 +521,24 @@
                     <p id="true-diamond-display">0</p>
                 </div>
             </div>
-            <!-- ▼▼▼ ここから修正 ▼▼▼ -->
-            <div id="next-stage-info" class="hidden">
-                <h2>次の挑戦</h2>
-                <p id="next-stage-text"></p>
-                <button id="start-next-stage-button" class="main-menu-button"></button>
-            </div>
-            <!-- ▲▲▲ ここまで修正 ▲▲▲ -->
-            <div id="main-menu-buttons">
-                <button id="go-to-stage-select-button" class="main-menu-button">ステージ選択</button>
-                <button id="go-to-item-exchange-button" class="main-menu-button">アイテム交換</button>
+            <!-- 修正前: 3つのボタンが並んでいた -->
+            <!-- 修正後: 「語彙王への道」ボタンと進捗表示を追加 -->
+            <div id="main-menu-container" style="max-width: 400px; margin: 40px auto;">
+                <div id="main-menu-buttons">
+                    <button id="go-to-stage-select-button" class="main-menu-button">ステージ選択</button>
+                    <button id="go-to-oilyou-mode-button" class="main-menu-button" style="background-color: #28a745;">語彙王への道</button>
+                    <button id="go-to-item-exchange-button" class="main-menu-button">アイテム交換</button>
+                </div>
+                <div id="oilyou-progress-container">
+                    <p>総合達成率</p>
+                    <div class="progress-bar-background">
+                        <div id="oilyou-progress-bar" class="progress-bar-foreground"></div>
+                    </div>
+                    <div id="oilyou-progress-details">
+                        <span id="oilyou-progress-text">0%</span>
+                        <span id="oilyou-progress-count">(0/0問)</span>
+                    </div>
+                </div>
             </div>
             <div id="data-management">
                 <button id="export-button" class="data-button">セーブデータを保存</button>
@@ -531,16 +555,8 @@
             <h2>読解復習ステージ</h2>
             <div id="comprehension-review-stage-selection-grid"></div>
 
-            <h2>ランダム（読み）ステージ</h2>
-            <div id="random-stage-selection-container">
-                <div class="random-stage-controls">
-                    <label for="random-start-stage">範囲:</label>
-                    <select id="random-start-stage"></select>
-                    <span>〜</span>
-                    <select id="random-end-stage"></select>
-                </div>
-                <button id="random-stage-button" class="stage-button">挑戦！</button>
-            </div>
+            <!-- 修正前: 「ランダム（読み）ステージ」のセクションがあった -->
+            <!-- 修正後: 「ランダム（読み）ステージ」を削除 -->
 
             <h2>ランダム（読解）ステージ</h2>
             <div id="reading-comprehension-stage-container">
@@ -595,7 +611,7 @@
         </div>
 
         <div id="result-page" class="hidden">
-            <h2>結果発表！</h2>
+            <h2 id="result-title">結果発表！</h2>
             <p id="score"></p>
             <div id="quiz-results-list"></div>
             <button id="next-stage-button" class="hidden">次のステージに挑戦</button>
@@ -1502,18 +1518,6 @@
 { "sentence": "彼は、長年の研究成果をまとめた<u>著述</u>を発表した。", "sentence2":"歴史に関する<u>著述</u>活動に、生涯を捧げた。", "word_to_read": "著述", "correct_reading": "ちょじゅつ", "meaning": "本や文章を書きあらわすこと。", "choices": ["ちょじゅつ", "しょじゅつ", "あらわす", "しっぴつ", "かく"] },
 { "sentence": "彼は<u>貧しい</u>家庭に育ったが、努力して立派な学者になった。", "sentence2":"想像力が<u>貧しい</u>と、豊かな発想は生まれない。", "word_to_read": "貧しい", "correct_reading": "まずしい", "meaning": "お金や物が少なく、生活が苦しいこと。また、内容などが乏しく、豊かでないこと。", "choices": ["まずしい", "まずい", "まずし", "まずい", "びんしい"] }
 
-
-
-
-
-
-
-
-
-
-
-
-
         ];
         // ===== ここまで問題データ =====
 
@@ -1523,12 +1527,6 @@
 
     // --- グローバル変数・DOM要素 ---
     const mainMenuScreen = document.getElementById('main-menu-screen');
-    // ▼▼▼ ここから修正 ▼▼▼
-    // メインメニューの「次の挑戦」エリアの要素を取得
-    const nextStageInfo = document.getElementById('next-stage-info');
-    const nextStageText = document.getElementById('next-stage-text');
-    const startNextStageButton = document.getElementById('start-next-stage-button');
-    // ▲▲▲ ここまで修正 ▲▲▲
     const stageSelectScreen = document.getElementById('stage-select-screen');
     const itemExchangeScreen = document.getElementById('item-exchange-screen');
     const exchangeHistoryScreen = document.getElementById('exchange-history-screen');
@@ -1547,7 +1545,8 @@
     const retryButton = document.getElementById('retry-button');
     const allRetryButton = document.getElementById('all-retry-button');
     const nextStageButton = document.getElementById('next-stage-button');
-    const randomStageButton = document.getElementById('random-stage-button');
+    // 修正前: randomStageButton のDOM要素取得があった
+    // 修正後: randomStageButton のDOM要素取得を削除
     const stageSelectionGrid = document.getElementById('stage-selection-grid');
     const testSelectionGrid = document.getElementById('test-selection-grid');
     const reviewStageSelectionGrid = document.getElementById('review-stage-selection-grid');
@@ -1561,8 +1560,8 @@
     const exportButton = document.getElementById('export-button');
     const importButton = document.getElementById('import-button');
     const importFileInput = document.getElementById('import-file-input');
-    const randomStartStageSelect = document.getElementById('random-start-stage');
-    const randomEndStageSelect = document.getElementById('random-end-stage');
+    // 修正前: randomStartStageSelect, randomEndStageSelect のDOM要素取得があった
+    // 修正後: 上記を削除
     const itemExchangeShop = document.getElementById('item-exchange-shop');
     const exchangeHistoryList = document.getElementById('exchange-history-list');
     const goToStageSelectButton = document.getElementById('go-to-stage-select-button');
@@ -1574,11 +1573,15 @@
     const readingComprehensionStageButton = document.getElementById('reading-comprehension-stage-button');
     const rcStartStageSelect = document.getElementById('rc-start-stage');
     const rcEndStageSelect = document.getElementById('rc-end-stage');
+    // 修正後: 「語彙王への道」関連のDOM要素取得を追加
+    const goToOilyouModeButton = document.getElementById('go-to-oilyou-mode-button');
+    const resultTitle = document.getElementById('result-title');
+
 
     // --- ゲーム設定 ---
     const gameConfig = {
         questionsPerStage: 12,
-        questionsPerRandomStage: 15,
+        questionsPerRandomStage: 15, // この設定は読解ステージで利用
         questionsPerTest: 20,
         questionsPerReviewStage: 15,
         questionsPerReadingComprehensionStage: 12,
@@ -1598,12 +1601,205 @@
     let isAnswered = false;
     let currentStageId = '';
     let isRetryMode = false;
-    let isRandomStage = false;
+    // 修正前: isRandomStage があった
+    // 修正後: isRandomStage を削除し、isOilyouMode を追加
     let isTestMode = false;
     let isReviewStage = false;
     let isReadingComprehensionStage = false;
     let isComprehensionReviewStage = false;
+    let isOilyouMode = false;
     let quizAttemptResults = [];
+    
+    // 修正後: 「語彙王への道」用の進捗管理変数を追加
+    const PROGRESS_STORAGE_KEY = 'kanjiYomiOilyouProgressData';
+    let oilyouProgressData = {};
+
+
+    // --- 修正後: 「語彙王への道」関連の関数を追加 ---
+
+    /**
+     * ローカルストレージから「語彙王への道」の進捗データを読み込む
+     */
+    function loadOilyouProgress() {
+        try {
+            const savedData = localStorage.getItem(PROGRESS_STORAGE_KEY);
+            oilyouProgressData = savedData ? JSON.parse(savedData) : {};
+        } catch (e) {
+            console.error('「語彙王への道」の進捗データの読み込みに失敗しました:', e);
+            oilyouProgressData = {};
+        }
+    }
+
+    /**
+     * 「語彙王への道」の進捗データをローカルストレージに保存する
+     * @param {object} progressData 保存する進捗データ
+     */
+    function saveOilyouProgress(progressData) {
+        try {
+            localStorage.setItem(PROGRESS_STORAGE_KEY, JSON.stringify(progressData));
+        } catch (e) {
+            console.error('「語彙王への道」の進捗データの保存に失敗しました:', e);
+        }
+    }
+
+    /**
+     * 特定の単語の進捗状況（クリア済みフォーム数と総フォーム数）を計算する
+     * @param {number} wordIndex 単語のID (allQuizDataでのインデックス)
+     * @param {object} progressData 現在の進捗データ
+     * @returns {{completed: number, total: number}}
+     */
+    function _calculateWordProgress(wordIndex, progressData) {
+        const progress = progressData[String(wordIndex)];
+        const totalForms = 5; // このアプリでのフォームは5種類
+        if (!progress) {
+            return { completed: 0, total: totalForms };
+        }
+        let completed = 0;
+        if (progress.form1) completed++; // 読み方クイズ
+        if (progress.form2) completed++; // 空欄補充クイズ
+        if (progress.form3) completed++; // 意味選択クイズ
+        if (progress.form4) completed++; // 逆引き意味選択クイズ
+        if (progress.form5) completed++; // 例文選択クイズ
+        return { completed, total: totalForms };
+    }
+    
+    /**
+     * 「語彙王への道」モードで出題するクイズのリストを生成する
+     * @param {Array} allWords 全単語データ
+     * @param {Set} clearedStageWordIndexes クリア済みのステージに含まれる単語のIDセット
+     * @returns {Array} クイズの問題オブジェクトの配列
+     */
+    function createOilyouRandomQuizList(allWords, clearedStageWordIndexes) {
+        const quizPool = [];
+        
+        // クリア済みステージに含まれる単語をループ
+        for (let i = 0; i < allWords.length; i++) {
+            if (!clearedStageWordIndexes.has(i)) {
+                continue; // クリアしていないステージの単語は対象外
+            }
+
+            const progress = _calculateWordProgress(i, oilyouProgressData);
+            if (progress.completed === progress.total) {
+                continue; // 完全にマスターした単語は対象外
+            }
+
+            const wordProgress = oilyouProgressData[String(i)] || {};
+
+            // 各フォームがクリア済みでなければ、問題プールに追加
+            if (!wordProgress.form1) quizPool.push({ wordIndex: i, formId: 1 });
+            if (!wordProgress.form2) quizPool.push({ wordIndex: i, formId: 2 });
+            if (!wordProgress.form3) quizPool.push({ wordIndex: i, formId: 3 });
+            if (!wordProgress.form4) quizPool.push({ wordIndex: i, formId: 4 });
+            if (!wordProgress.form5) quizPool.push({ wordIndex: i, formId: 5 });
+        }
+
+        // 問題プールをシャッフル
+        for (let i = quizPool.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [quizPool[i], quizPool[j]] = [quizPool[j], quizPool[i]];
+        }
+
+        // シャッフルされたプールから最大15問を選び、クイズ用のデータを作成
+        const quizList = quizPool.slice(0, 15).map(item => {
+            const progress = _calculateWordProgress(item.wordIndex, oilyouProgressData);
+            return {
+                ...item,
+                questionWord: allWords[item.wordIndex],
+                progressText: `${progress.completed}/${progress.total} 完了`
+            };
+        });
+
+        return quizList;
+    }
+
+    /**
+     * 「語彙王への道」の進捗を更新する
+     * @param {number} wordIndex 単語のID
+     * @param {number} formId クリアしたフォームのID
+     * @param {boolean} isFirstTimeCorrect この問題に初めて正解したか
+     */
+    function updateOilyouProgress(wordIndex, formId, isFirstTimeCorrect) {
+        if (!isFirstTimeCorrect) {
+            return; // 2回目以降の正解では進捗を更新しない
+        }
+
+        const key = String(wordIndex);
+        if (!oilyouProgressData[key]) {
+            oilyouProgressData[key] = {};
+        }
+
+        oilyouProgressData[key][`form${formId}`] = true;
+        saveOilyouProgress(oilyouProgressData);
+    }
+
+    /**
+     * クリア済み問題数と総問題数を計算する
+     * @param {Array} allWords 全単語データ
+     * @param {object} progressData 現在の進捗データ
+     * @returns {{totalCompletedForms: number, totalAllForms: number}}
+     */
+    function calculateOilyouDetailedStats(allWords, progressData) {
+        let totalCompletedForms = 0;
+        const totalFormsPerWord = 5;
+        let totalAllForms = allWords.length * totalFormsPerWord;
+
+        if (!allWords || allWords.length === 0) {
+            return { totalCompletedForms: 0, totalAllForms: 0 };
+        }
+
+        for (let i = 0; i < allWords.length; i++) {
+            const progress = progressData[String(i)];
+            if (progress) {
+                if (progress.form1) totalCompletedForms++;
+                if (progress.form2) totalCompletedForms++;
+                if (progress.form3) totalCompletedForms++;
+                if (progress.form4) totalCompletedForms++;
+                if (progress.form5) totalCompletedForms++;
+            }
+        }
+        return { totalCompletedForms, totalAllForms };
+    }
+    
+    /**
+     * 「語彙王への道」の総合達成率を計算する
+     * @param {Array} allWords 全単語データ
+     * @returns {number} 達成率 (0-100)
+     */
+    function calculateOilyouCompletionRate(allWords) {
+        if (!allWords || allWords.length === 0) {
+            return 0;
+        }
+        const detailedStats = calculateOilyouDetailedStats(allWords, oilyouProgressData);
+        if (detailedStats.totalAllForms === 0) {
+            return 0;
+        }
+        return (detailedStats.totalCompletedForms / detailedStats.totalAllForms) * 100;
+    }
+
+    /**
+     * メインメニューの「語彙王への道」進捗表示を更新する
+     */
+    function updateOilyouProgressDisplay() {
+        if (!allQuizData || allQuizData.length === 0) return;
+
+        loadOilyouProgress();
+        const completionRate = calculateOilyouCompletionRate(allQuizData);
+        const roundedRate = completionRate.toFixed(2);
+        const detailedStats = calculateOilyouDetailedStats(allQuizData, oilyouProgressData);
+
+        const progressBar = document.getElementById('oilyou-progress-bar');
+        const progressText = document.getElementById('oilyou-progress-text');
+        const progressCount = document.getElementById('oilyou-progress-count');
+
+        if (progressBar && progressText && progressCount) {
+            progressBar.style.width = `${completionRate}%`;
+            progressText.textContent = `${roundedRate}%`;
+            progressCount.textContent = `(${detailedStats.totalCompletedForms}/${detailedStats.totalAllForms}問)`;
+        }
+    }
+    
+    // --- ここまで「語彙王への道」関連の関数 ---
+
 
     // --- データ管理 ---
     function loadData() {
@@ -1769,45 +1965,9 @@
     function showMainMenu() {
         showScreen(mainMenuScreen);
         updateDisplays();
-        // ▼▼▼ ここから修正 ▼▼▼
-        // メインメニューの「次の挑戦」エリアを更新する
-        updateNextStageInfo();
-        // ▲▲▲ ここまで修正 ▲▲▲
+        // 修正後: メインメニュー表示時に「語彙王への道」の進捗を更新
+        updateOilyouProgressDisplay();
     }
-
-    // ▼▼▼ ここから修正 ▼▼▼
-    /** メインメニューの「次の挑戦」エリアを更新する関数 */
-    function updateNextStageInfo() {
-        // クリア済みの通常ステージの番号リストを取得
-        const clearedStages = Object.keys(playerData.stageClears)
-            .filter(id => id.startsWith('stage-') && playerData.stageClears[id] > 0)
-            .map(id => parseInt(id.split('-')[1]));
-
-        let nextStageNumber;
-        if (clearedStages.length === 0) {
-            nextStageNumber = 1; // まだ何もクリアしていない場合はステージ1
-        } else {
-            const maxClearedStage = Math.max(...clearedStages);
-            nextStageNumber = maxClearedStage + 1; // 最後にクリアしたステージの次
-        }
-
-        // 次のステージが存在し、かつアンロックされているかチェック
-        if (nextStageNumber <= gameConfig.totalStages && nextStageNumber <= playerData.unlockedStage) {
-            nextStageInfo.classList.remove('hidden'); // 表示する
-            if (nextStageNumber === 1) {
-                nextStageText.textContent = 'さあ、最初のステージから始めよう！';
-            } else {
-                nextStageText.textContent = `現在、ステージ${nextStageNumber - 1}までクリア済みです。`;
-            }
-            startNextStageButton.textContent = `ステージ ${nextStageNumber} に挑戦する`;
-            // ボタンがクリックされたら、そのステージのクイズを開始する
-            startNextStageButton.onclick = () => startQuiz(`stage-${nextStageNumber}`, false);
-        } else {
-            // 全ステージクリア済み、または次のステージがまだロックされている場合は非表示
-            nextStageInfo.classList.add('hidden');
-        }
-    }
-    // ▲▲▲ ここまで修正 ▲▲▲
 
     function showStageSelect() {
         showScreen(stageSelectScreen);
@@ -1816,7 +1976,8 @@
         createReviewStageButtons();
         createComprehensionReviewStageButtons();
         createTestButtons();
-        populateRandomStageSelectors();
+        // 修正前: populateRandomStageSelectors() の呼び出しがあった
+        // 修正後: 上記を削除し、読解ステージ用のセレクター更新関数のみ残す
         populateReadingComprehensionStageSelectors();
     }
 
@@ -1851,23 +2012,8 @@
         }
     }
     
-    function populateRandomStageSelectors() {
-        randomStartStageSelect.innerHTML = '';
-        randomEndStageSelect.innerHTML = '';
-        const maxStage = playerData.unlockedStage;
-        for (let i = 1; i <= maxStage; i++) {
-            const startOption = document.createElement('option');
-            startOption.value = i;
-            startOption.textContent = `ステージ ${i}`;
-            randomStartStageSelect.appendChild(startOption);
-
-            const endOption = document.createElement('option');
-            endOption.value = i;
-            endOption.textContent = `ステージ ${i}`;
-            randomEndStageSelect.appendChild(endOption);
-        }
-        randomEndStageSelect.value = maxStage;
-    }
+    // 修正前: populateRandomStageSelectors 関数があった
+    // 修正後: 上記を削除
 
     function populateReadingComprehensionStageSelectors() {
         rcStartStageSelect.innerHTML = '';
@@ -1958,7 +2104,6 @@
         }
     }
 
-    /** 読解復習ステージのボタンを生成する関数 */
     function createComprehensionReviewStageButtons() {
         comprehensionReviewStageSelectionGrid.innerHTML = '';
         const reviewQuestions = playerData.comprehensionReviewQuestions;
@@ -2041,8 +2186,7 @@
 
     // --- アイテム交換 ---
     const exchangeItems = [
- { id: 'speed_challenge_1', name: 'スピード勝負１回', cost: 30, currency: 'sapphire', available: true },        
-{ id: 'toca_life_1min', name: 'トッカライフワールド１分', cost: 100, currency: 'ruby', available: true },
+        { id: 'toca_life_1min', name: 'トッカライフワールド１分', cost: 100, currency: 'ruby', available: true },
         { id: 'tosochu_1book', name: '逃走中１冊', cost: 200, currency: 'sapphire', available: true },
         { id: 'foot_massage', name: '足裏マッサージ30秒', cost: 10, currency: 'ruby', available: true },
         { id: 'preppy_pack_ruby', name: 'パーフェクトなプレッピースタイルパック', cost: 150, currency: 'ruby', available: true },
@@ -2191,7 +2335,8 @@
         quizAttemptResults = [];
         isAnswered = false;
 
-        isRandomStage = stageId.startsWith('random-');
+        // 修正後: isOilyouMode の判定を追加
+        isOilyouMode = stageId === 'oilyou';
         isTestMode = stageId.startsWith('test-');
         isReviewStage = stageId.startsWith('review-');
         isComprehensionReviewStage = stageId.startsWith('comprehension-review-');
@@ -2199,19 +2344,44 @@
 
         if (isRetryMode) {
             currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
+            if (isOilyouMode) {
+                // 再挑戦時は、前回間違えた問題の形式をそのまま引き継ぐ
+                currentQuizData = quizAttemptResults
+                    .filter(r => !r.isCorrect)
+                    .map(r => ({ ...r.question, oilyouFormId: r.oilyouFormId, oilyouProgressText: r.oilyouProgressText }));
+            }
+        } else if (isOilyouMode) {
+            // 修正後: 「語彙王への道」モードの問題生成ロジック
+            loadOilyouProgress();
+            const clearedStageWordIndexes = new Set();
+            // クリア済みの通常ステージに出てくる単語を対象にする
+            for (const stageKey in playerData.stageClears) {
+                if (playerData.stageClears[stageKey] > 0) {
+                    const stageNum = parseInt(stageKey.split('-')[1]);
+                    const sIndex = (stageNum - 1) * gameConfig.questionsPerStage;
+                    const eIndex = sIndex + gameConfig.questionsPerStage;
+                    for (let i = sIndex; i < eIndex && i < allQuizData.length; i++) {
+                        clearedStageWordIndexes.add(i);
+                    }
+                }
+            }
+            const oilyouQuizList = createOilyouRandomQuizList(allQuizData, clearedStageWordIndexes);
+            currentQuizData = oilyouQuizList.map(item => ({
+                ...item.questionWord,
+                oilyouFormId: item.formId,
+                oilyouProgressText: item.progressText
+            }));
         } else if (isReadingComprehensionStage) {
             let rawQuizData;
              if (isComprehensionReviewStage) {
-                // 読解復習ステージの場合、復習リストから問題を取得
                 const stageNumber = parseInt(stageId.split('-')[2]);
                 const startIndex = (stageNumber - 1) * gameConfig.questionsPerReadingComprehensionStage;
                 const endIndex = startIndex + gameConfig.questionsPerReadingComprehensionStage;
                 const reviewQuestionIds = playerData.comprehensionReviewQuestions.slice(startIndex, endIndex);
                 rawQuizData = allQuizData.filter(q => reviewQuestionIds.includes(q.id));
-                // 復習リストの順番通りに出題
                 rawQuizData.sort((a, b) => reviewQuestionIds.indexOf(a.id) - reviewQuestionIds.indexOf(b.id));
 
-             } else { // 通常のランダム読解ステージ
+             } else {
                 const parts = stageId.split('-');
                  if (parts.length > 2) {
                     const startStage = parseInt(parts[2]);
@@ -2225,16 +2395,14 @@
                         }
                     }
                     rawQuizData = shuffleArray(questionPool).slice(0, gameConfig.questionsPerReadingComprehensionStage);
-                 } else { // fallback for old retry id
+                 } else {
                     rawQuizData = shuffleArray([...allQuizData]).slice(0, gameConfig.questionsPerReadingComprehensionStage);
                  }
              }
 
-            // 問題タイプ（逆引き意味選択、空欄補充、意味選択、例文選択）を割り当てる
             const reverseMeaningQuestionCount = 2;
             const fillInTheBlankQuestionCount = 2;
             const meaningQuestionCount = 3;
-            // 復習ステージでも問題の出題形式が偏らないように、一度シャッフルしてからタイプを割り当てる
             const shuffledRawData = shuffleArray([...rawQuizData]);
             currentQuizData = shuffledRawData.map((question, index) => {
                 if (index < reverseMeaningQuestionCount) {
@@ -2247,9 +2415,7 @@
                     return { ...question, questionType: 'sentence' };
                 }
             });
-            // 最終的な問題の順番をシャッフル
             currentQuizData = shuffleArray(currentQuizData);
-
         } else if (isReviewStage) { 
             const stageNumber = parseInt(stageId.split('-')[1]);
             const startIndex = (stageNumber - 1) * gameConfig.questionsPerReviewStage;
@@ -2257,20 +2423,8 @@
             const reviewQuestionIds = playerData.reviewQuestions.slice(startIndex, endIndex);
             currentQuizData = allQuizData.filter(q => reviewQuestionIds.includes(q.id));
             currentQuizData.sort((a, b) => reviewQuestionIds.indexOf(a.id) - reviewQuestionIds.indexOf(b.id));
-        } else if (isRandomStage) {
-            const [_, startStageStr, endStageStr] = stageId.split('-');
-            const startStage = parseInt(startStageStr);
-            const endStage = parseInt(endStageStr);
-            
-            let questionPool = [];
-            for (let i = startStage; i <= endStage; i++) {
-                const startIndex = (i - 1) * gameConfig.questionsPerStage;
-                const endIndex = startIndex + gameConfig.questionsPerStage;
-                if (startIndex < allQuizData.length) {
-                    questionPool.push(...allQuizData.slice(startIndex, endIndex));
-                }
-            }
-            currentQuizData = shuffleArray(questionPool).slice(0, gameConfig.questionsPerRandomStage);
+        // 修正前: isRandomStage の分岐があった
+        // 修正後: 上記を削除
         } else if (isTestMode) {
             const [_, startStageStr, endStageStr] = stageId.split('-');
             const startStage = parseInt(startStageStr);
@@ -2287,11 +2441,16 @@
             }
             currentQuizData = shuffleArray(allQuizData.filter(q => relevantQuestionIds.includes(q.id))).slice(0, gameConfig.questionsPerTest);
             isRetryMode = false;
-        } else {
+        } else { // 通常ステージ
             const stageNumber = parseInt(stageId.split('-')[1]);
             const startIndex = (stageNumber - 1) * gameConfig.questionsPerStage;
             const endIndex = startIndex + gameConfig.questionsPerStage;
             currentQuizData = allQuizData.slice(startIndex, endIndex);
+        }
+
+        if (currentQuizData.length === 0 && isOilyouMode) {
+            showCustomAlert('おめでとうございます！全ての単語をマスターしました！');
+            return;
         }
 
         mainMenuScreen.classList.add('hidden');
@@ -2319,9 +2478,22 @@
             choicesElem.innerHTML = '';
             comprehensionInstructionElem.innerHTML = '';
             comprehensionWordElem.innerHTML = '';
-            choicesElem.className = 'choices-grid'; // Reset class
+            choicesElem.className = 'choices-grid';
 
-            if (isReadingComprehensionStage) {
+            // 修正後: isOilyouMode の場合の処理を追加
+            if (isOilyouMode) {
+                const question = currentQuizData[currentQuestionIndex];
+                questionNumberElem.textContent = `語彙王への道 (${question.oilyouProgressText})  第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+                // oilyouFormId に基づいて出題形式を決定
+                switch (question.oilyouFormId) {
+                    case 1: loadNormalQuizPhase(); break;
+                    case 2: loadFillInTheBlankQuestion(); break;
+                    case 3: loadMeaningChoiceQuestion(); break;
+                    case 4: loadReverseMeaningQuestion(); break;
+                    case 5: loadSentenceChoiceQuestion(); break;
+                    default: loadNormalQuizPhase(); break;
+                }
+            } else if (isReadingComprehensionStage) {
                 const question = currentQuizData[currentQuestionIndex];
                 if (question.questionType === 'fill_in_the_blank') {
                     loadFillInTheBlankQuestion();
@@ -2342,7 +2514,9 @@
 
     function loadNormalQuizPhase() {
         const question = currentQuizData[currentQuestionIndex];
-        questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        if (!isOilyouMode) {
+            questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        }
         sentenceElem.innerHTML = '';
         comprehensionInstructionElem.innerHTML = '';
         comprehensionWordElem.innerHTML = '';
@@ -2374,7 +2548,9 @@
 
     function loadFillInTheBlankQuestion() {
         const question = currentQuizData[currentQuestionIndex];
-        questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        if (!isOilyouMode) {
+            questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        }
         comprehensionInstructionElem.innerHTML = "空欄にあてはまる語句を選んでください。";
         comprehensionWordElem.innerHTML = "";
         
@@ -2422,7 +2598,9 @@
 
     function loadReverseMeaningQuestion() {
         const question = currentQuizData[currentQuestionIndex];
-        questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        if (!isOilyouMode) {
+            questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        }
         comprehensionInstructionElem.innerHTML = "この意味を持つ語句を選んでください。";
         comprehensionWordElem.innerHTML = `「${question.meaning}」`;
         sentenceElem.innerHTML = "";
@@ -2462,7 +2640,9 @@
 
     function loadMeaningChoiceQuestion() {
         const question = currentQuizData[currentQuestionIndex];
-        questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        if (!isOilyouMode) {
+            questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        }
         comprehensionInstructionElem.innerHTML = "正しい意味を選んでください。";
         comprehensionWordElem.innerHTML = `「${question.word_to_read}（${question.correct_reading}）」`;
         sentenceElem.innerHTML = "";
@@ -2501,7 +2681,9 @@
 
     function loadSentenceChoiceQuestion() {
         const question = currentQuizData[currentQuestionIndex];
-        questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        if (!isOilyouMode) {
+            questionNumberElem.textContent = `第 ${currentQuestionIndex + 1} 問 / ${currentQuizData.length} 問`;
+        }
         comprehensionInstructionElem.innerHTML = "この語句が使われている正しい例文を選んでください。";
         comprehensionWordElem.innerHTML = `「${question.word_to_read}（${question.correct_reading}）」`;
         sentenceElem.innerHTML = "";
@@ -2539,7 +2721,7 @@
         if (isAnswered) return;
         isAnswered = true;
 
-        if (isReadingComprehensionStage) {
+        if (isReadingComprehensionStage || (isOilyouMode && question.oilyouFormId > 1)) {
             handleComprehensionAnswer(selectedData, question, selectedButton);
         } else {
             handleNormalAnswer(selectedData, question, selectedButton);
@@ -2551,18 +2733,32 @@
         allChoiceButtons.forEach(button => button.onclick = null);
         const isCorrect = (selectedChoice === question.correct_reading);
         
-        quizAttemptResults.push({
+        const resultLog = {
             question: question,
             userAnswer: selectedChoice,
             isCorrect: isCorrect,
             sentenceDisplayed: sentenceElem.innerHTML
-        });
+        };
+        // 修正後: 「語彙王への道」モードの情報をログに追加
+        if (isOilyouMode) {
+            resultLog.oilyouFormId = question.oilyouFormId;
+            resultLog.oilyouProgressText = question.oilyouProgressText;
+        }
+        quizAttemptResults.push(resultLog);
 
         if (isCorrect) {
             feedbackElem.textContent = '正解！';
             feedbackElem.classList.add('correct');
             score++;
             selectedButton.classList.add('correct');
+            // 修正後: 「語彙王への道」の進捗を更新
+            if (isOilyouMode && !isRetryMode) {
+                const wordIndex = question.id;
+                const formId = question.oilyouFormId;
+                const progress = oilyouProgressData[String(wordIndex)];
+                const isFirstTimeCorrect = !progress || !progress[`form${formId}`];
+                updateOilyouProgress(wordIndex, formId, isFirstTimeCorrect);
+            }
         } else {
             feedbackElem.textContent = '不正解…';
             feedbackElem.classList.add('incorrect');
@@ -2596,27 +2792,39 @@
         const isCorrect = selectedButton.dataset.isCorrect === 'true';
         
         let userAnswerText = '';
-        if (question.questionType === 'meaning') {
+        if (question.questionType === 'meaning' || (isOilyouMode && question.oilyouFormId === 3)) {
             userAnswerText = selectedData.meaning;
-        } else if (question.questionType === 'sentence') {
+        } else if (question.questionType === 'sentence' || (isOilyouMode && question.oilyouFormId === 5)) {
             userAnswerText = selectedData.sentence;
-        } else if (question.questionType === 'fill_in_the_blank' || question.questionType === 'reverse_meaning') {
+        } else if (question.questionType === 'fill_in_the_blank' || (isOilyouMode && question.oilyouFormId === 2) || question.questionType === 'reverse_meaning' || (isOilyouMode && question.oilyouFormId === 4)) {
             userAnswerText = `${selectedData.text}（${selectedData.reading}）`;
         }
 
-        quizAttemptResults.push({
+        const resultLog = {
             question: question,
             userAnswer: userAnswerText,
             isCorrect: isCorrect,
             questionType: question.questionType,
             sentenceDisplayed: sentenceElem.innerHTML
-        });
+        };
+        if (isOilyouMode) {
+            resultLog.oilyouFormId = question.oilyouFormId;
+            resultLog.oilyouProgressText = question.oilyouProgressText;
+        }
+        quizAttemptResults.push(resultLog);
 
         if (isCorrect) {
             feedbackElem.textContent = '正解！';
             feedbackElem.classList.add('correct');
             selectedButton.classList.add('correct');
             score++;
+            if (isOilyouMode && !isRetryMode) {
+                const wordIndex = question.id;
+                const formId = question.oilyouFormId;
+                const progress = oilyouProgressData[String(wordIndex)];
+                const isFirstTimeCorrect = !progress || !progress[`form${formId}`];
+                updateOilyouProgress(wordIndex, formId, isFirstTimeCorrect);
+            }
         } else {
             feedbackElem.textContent = '不正解…';
             feedbackElem.classList.add('incorrect');
@@ -2659,19 +2867,46 @@
         quizContainer.classList.add('hidden');
         resultPage.classList.remove('hidden');
         nextStageButton.classList.add('hidden');
+        resultTitle.textContent = '結果発表！'; // デフォルトのタイトル
 
         let isPerfect = incorrectQuestions.length === 0;
         let earnedAmount = 0;
         let gemType = '';
-        incorrectQuestionsForRetry = [...new Set(incorrectQuestions)]; // 重複を削除
+        incorrectQuestionsForRetry = [...new Set(incorrectQuestions)];
 
-        if (isReadingComprehensionStage) {
+        // 修正後: isOilyouMode の結果処理を追加
+        if (isOilyouMode) {
+            const total = currentQuizData.length;
+            const correct = score;
+            let message = `<p>正解数: ${correct} / ${total}</p>`;
+            
+            resultTitle.textContent = isRetryMode ? '再挑戦の結果' : 'トレーニング結果';
+
+            if (total > 0) {
+                const perfect = (correct === total);
+                if (perfect) {
+                    const gainedAmount = 15;
+                    playerData.totalSapphires += gainedAmount;
+                    showGemAnimation(gainedAmount, 'sapphire');
+                    message += isRetryMode ? `🎉 見事クリア！サファイアを${gainedAmount}個獲得しました！ 🎉` : `🎉 全問正解！素晴らしい！サファイアを${gainedAmount}個獲得しました！ 🎉`;
+                } else {
+                    message += `お疲れ様でした！間違えた問題はまた出題されます。`;
+                }
+            } else {
+                message += `🎉 全ての単語をマスターしました！おめでとうございます！あなたは語彙王です！ 🎉`;
+            }
+
+            scoreElem.innerHTML = message;
+            retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
+            allRetryButton.textContent = 'もう一度トレーニング';
+            backToStageSelectButton.textContent = 'メインメニューへ戻る';
+        } else if (isReadingComprehensionStage) {
             isPerfect = incorrectQuestionsForRetry.length === 0;
 
-            if (isComprehensionReviewStage) { // 読解復習ステージの結果処理
+            if (isComprehensionReviewStage) {
                 gemType = 'sapphire';
                 if (isPerfect) {
-                    earnedAmount = 20; // 報酬を少し多めに設定
+                    earnedAmount = 20;
                     playerData.totalSapphires += earnedAmount;
                     showGemAnimation(earnedAmount, gemType);
                     const message = isRetryMode ? `おめでとう！再挑戦で全問正解！サファイアを${earnedAmount}個獲得！` : `おめでとう！読解復習ステージクリア！サファイアを${earnedAmount}個獲得！`;
@@ -2682,11 +2917,10 @@
                 }
 
                 if (!isRetryMode) {
-                    // 正解した問題を復習リストから削除
                     const correctFirstTryIds = quizAttemptResults.filter(r => r.isCorrect).map(r => r.question.id);
                     playerData.comprehensionReviewQuestions = playerData.comprehensionReviewQuestions.filter(id => !correctFirstTryIds.includes(id));
                 }
-            } else { // 通常のランダム読解ステージの結果処理
+            } else {
                 gemType = 'sapphire';
                 if (isPerfect) {
                     earnedAmount = 10;
@@ -2699,7 +2933,6 @@
                 }
                 
                 if (!isRetryMode) {
-                    // 間違えた問題を読解復習リストにストックする
                     incorrectQuestions.forEach(qId => {
                         if (!playerData.comprehensionReviewQuestions.includes(qId)) {
                             playerData.comprehensionReviewQuestions.push(qId);
@@ -2725,9 +2958,7 @@
             if (!isRetryMode) {
                 const correctFirstTryIds = quizAttemptResults.filter(r => r.isCorrect).map(r => r.question.id);
                 const incorrectFirstTryIds = incorrectQuestions;
-                // 正解した問題を復習リストから削除
                 let updatedReviewQuestions = playerData.reviewQuestions.filter(id => !correctFirstTryIds.includes(id));
-                // 不正解だった問題は復習リストに残すため、一度削除してから再度追加する
                 updatedReviewQuestions = updatedReviewQuestions.filter(id => !incorrectFirstTryIds.includes(id));
                 updatedReviewQuestions.push(...incorrectFirstTryIds);
                 playerData.reviewQuestions = updatedReviewQuestions;
@@ -2761,19 +2992,8 @@
                     showCustomAlert('残念！確認テストは全問正解が必要だよ。もう一度挑戦してね！');
                 }
                 retryButton.classList.add('hidden');
-            } else if (isRandomStage) {
-                gemType = 'sapphire';
-                earnedAmount = (isPerfect || (isRetryMode && isPerfect)) ? 10 : 0;
-                if (earnedAmount > 0) {
-                    playerData.totalSapphires += earnedAmount;
-                    showGemAnimation(earnedAmount, gemType);
-                    showCustomAlert(`おめでとう！ランダムステージクリア！サファイアを${earnedAmount}個獲得！`);
-                } else if (!isRetryMode && isPerfect) {
-                    showCustomAlert('おめでとう！ランダムステージクリア！');
-                } else {
-                     showCustomAlert('ランダムステージが終わったよ！');
-                }
-                retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
+            // 修正前: isRandomStage の分岐があった
+            // 修正後: 上記を削除
             } else { // 通常ステージ
                 gemType = 'ruby';
                 if (!isRetryMode && !isPerfect) {
@@ -2821,19 +3041,23 @@
         
         saveData();
         updateDisplays();
-        scoreElem.textContent = `${score} / ${currentQuizData.length} 問正解！`;
+        if (!isOilyouMode) {
+            scoreElem.textContent = `${score} / ${currentQuizData.length} 問正解！`;
+        }
         
         quizResultsList.innerHTML = '<h3>クイズ結果一覧:</h3>';
         const ul = document.createElement('ul');
 
-        if (isReadingComprehensionStage) {
+        if (isReadingComprehensionStage || isOilyouMode) {
             quizAttemptResults.forEach((result, index) => {
                 const question = result.question;
                 const resultText = result.isCorrect ? '正解' : '不正解';
                 const resultClass = result.isCorrect ? 'result-correct' : 'result-incorrect';
                 const li = document.createElement('li');
+                
+                const questionType = isOilyouMode ? result.oilyouFormId : result.questionType;
 
-                if (result.questionType === 'fill_in_the_blank') {
+                if (questionType === 2 || questionType === 'fill_in_the_blank') {
                     li.innerHTML = `
                         <p><strong>第${index + 1}問:</strong> 空欄にあてはまる語句を選ぶ問題</p>
                         <p>${result.sentenceDisplayed}</p>
@@ -2841,7 +3065,7 @@
                         <p class="correct-answer-display">正解: ${question.word_to_read}（${question.correct_reading}）</p>
                         <p class="${resultClass}">${resultText}</p>
                     `;
-                } else if (result.questionType === 'reverse_meaning') {
+                } else if (questionType === 4 || questionType === 'reverse_meaning') {
                      li.innerHTML = `
                         <p><strong>第${index + 1}問:</strong> 意味から語句を選ぶ問題</p>
                         <p>問題: 「${question.meaning}」</p>
@@ -2849,18 +3073,25 @@
                         <p class="correct-answer-display">正解: ${question.word_to_read}（${question.correct_reading}）</p>
                         <p class="${resultClass}">${resultText}</p>
                     `;
-                } else if (result.questionType === 'meaning') {
+                } else if (questionType === 3 || questionType === 'meaning') {
                     li.innerHTML = `
                         <p><strong>第${index + 1}問:</strong> 「${question.word_to_read}」の正しい意味を選ぶ問題</p>
                         <p>あなたの回答: <span class="${resultClass}">${result.userAnswer}</span></p>
                         <p class="correct-answer-display">正解: ${question.meaning}</p>
                         <p class="${resultClass}">${resultText}</p>
                     `;
-                } else { // 'sentence'
+                } else if (questionType === 5 || questionType === 'sentence') {
                     li.innerHTML = `
                         <p><strong>第${index + 1}問:</strong> 「${question.word_to_read}」が入る正しい例文を選ぶ問題</p>
                         <p class="${resultClass}">${resultText}</p>
                         <p class="correct-answer-display">正解: ${question.sentence}</p>
+                    `;
+                } else { // 通常の読み問題 (formId: 1)
+                     li.innerHTML = `
+                        <p><strong>第${index + 1}問:</strong> ${result.sentenceDisplayed.replace(/<u>(.*?)<\/u>/, '<span><u>$1</u></span>')}</p>
+                        <p>あなたの回答: <span class="${resultClass}">${result.userAnswer}</span></p>
+                        <p class="correct-answer-display">正解: ${question.correct_reading}</p>
+                        <p class="${resultClass}">${resultText}</p>
                     `;
                 }
                 ul.appendChild(li);
@@ -2975,6 +3206,8 @@
         goToStageSelectButton.addEventListener('click', showStageSelect);
         goToItemExchangeButton.addEventListener('click', showItemExchange);
         goToHistoryButton.addEventListener('click', showExchangeHistoryScreen);
+        // 修正後: 「語彙王への道」ボタンのイベントリスナーを追加
+        goToOilyouModeButton.addEventListener('click', () => startQuiz('oilyou', false));
 
         document.getElementById('back-to-menu-from-stage-select').addEventListener('click', showMainMenu);
         document.getElementById('back-to-menu-from-exchange').addEventListener('click', showMainMenu);
@@ -2999,26 +3232,17 @@
             }
         });
 
-        randomStageButton.addEventListener('click', () => {
-            const startStage = randomStartStageSelect.value;
-            const endStage = randomEndStageSelect.value;
-            if (parseInt(startStage) > parseInt(endStage)) {
-                 showCustomAlert('開始ステージは終了ステージより後のステージにできません。');
-                 return;
-            }
-            const randomStageId = `random-${startStage}-${endStage}`;
-            startQuiz(randomStageId, false);
-        });
+        // 修正前: ランダム(読み)ステージのイベントリスナーがあった
+        // 修正後: 上記を削除
 
-        randomStartStageSelect.addEventListener('change', () => {
-            const startStage = parseInt(randomStartStageSelect.value);
-            const endStage = parseInt(randomEndStageSelect.value);
-            if (startStage > endStage) {
-                randomEndStageSelect.value = startStage;
+        backToStageSelectButton.addEventListener('click', () => {
+            // 修正後: 「語彙王への道」モードから戻る場合はメインメニューへ
+            if (isOilyouMode) {
+                showMainMenu();
+            } else {
+                showStageSelect();
             }
         });
-
-        backToStageSelectButton.addEventListener('click', showStageSelect);
         allRetryButton.addEventListener('click', () => {
             if (currentStageId) {
                 startQuiz(currentStageId, false);
@@ -3034,6 +3258,8 @@
 
     function initApp() {
         loadData();
+        // 修正後: 「語彙王への道」の進捗データも読み込む
+        loadOilyouProgress();
         if (!window.appInitialized) {
             addEventListeners();
             window.appInitialized = true;
