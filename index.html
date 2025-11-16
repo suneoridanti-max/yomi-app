@@ -2326,16 +2326,15 @@
     }
 
     // --- クイズ進行 ---
-    function startQuiz(stageId, retry = false) {
+function startQuiz(stageId, retry = false) {
         isRetryMode = retry;
         currentStageId = stageId;
         score = 0;
         currentQuestionIndex = 0;
         incorrectQuestions = [];
-        quizAttemptResults = [];
+        // 修正前: quizAttemptResults = []; がこの位置にあった
         isAnswered = false;
 
-        // 修正後: isOilyouMode の判定を追加
         isOilyouMode = stageId === 'oilyou';
         isTestMode = stageId.startsWith('test-');
         isReviewStage = stageId.startsWith('review-');
@@ -2343,18 +2342,17 @@
         isReadingComprehensionStage = stageId.startsWith('reading-comprehension') || isComprehensionReviewStage;
 
         if (isRetryMode) {
-            currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
             if (isOilyouMode) {
                 // 再挑戦時は、前回間違えた問題の形式をそのまま引き継ぐ
                 currentQuizData = quizAttemptResults
                     .filter(r => !r.isCorrect)
                     .map(r => ({ ...r.question, oilyouFormId: r.oilyouFormId, oilyouProgressText: r.oilyouProgressText }));
+            } else {
+                currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
             }
         } else if (isOilyouMode) {
-            // 修正後: 「語彙王への道」モードの問題生成ロジック
             loadOilyouProgress();
             const clearedStageWordIndexes = new Set();
-            // クリア済みの通常ステージに出てくる単語を対象にする
             for (const stageKey in playerData.stageClears) {
                 if (playerData.stageClears[stageKey] > 0) {
                     const stageNum = parseInt(stageKey.split('-')[1]);
@@ -2423,8 +2421,6 @@
             const reviewQuestionIds = playerData.reviewQuestions.slice(startIndex, endIndex);
             currentQuizData = allQuizData.filter(q => reviewQuestionIds.includes(q.id));
             currentQuizData.sort((a, b) => reviewQuestionIds.indexOf(a.id) - reviewQuestionIds.indexOf(b.id));
-        // 修正前: isRandomStage の分岐があった
-        // 修正後: 上記を削除
         } else if (isTestMode) {
             const [_, startStageStr, endStageStr] = stageId.split('-');
             const startStage = parseInt(startStageStr);
@@ -2448,6 +2444,10 @@
             currentQuizData = allQuizData.slice(startIndex, endIndex);
         }
 
+        // 修正後: この位置に quizAttemptResults = []; を移動
+        // これにより、再挑戦の問題リストを作成した後に、次のクイズ用の結果リストを初期化できる
+        quizAttemptResults = [];
+
         if (currentQuizData.length === 0 && isOilyouMode) {
             showCustomAlert('おめでとうございます！全ての単語をマスターしました！');
             return;
@@ -2467,7 +2467,7 @@
             loadQuestion();
         }, 500);
     }
-    
+        
     function loadQuestion() {
         quizContainer.removeEventListener('click', goToNextQuestion);
         if (currentQuestionIndex < currentQuizData.length) {
