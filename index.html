@@ -2275,13 +2275,14 @@
     }
 
     // --- クイズ進行 ---
+// --- クイズ進行 ---
     function startQuiz(stageId, retry = false) {
         isRetryMode = retry;
         currentStageId = stageId;
         score = 0;
         currentQuestionIndex = 0;
         incorrectQuestions = [];
-        quizAttemptResults = [];
+        // quizAttemptResults = []; // ★修正: ここでの初期化を削除しました（まだ消しちゃダメ！）
         isAnswered = false;
 
         isOilyouMode = stageId === 'oilyou';
@@ -2291,13 +2292,19 @@
         isReadingComprehensionStage = stageId.startsWith('reading-comprehension') || isComprehensionReviewStage;
 
         if (isRetryMode) {
-            currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
+            // リトライモードの場合
             if (isOilyouMode) {
+                // 語彙王モード: 前回の結果(quizAttemptResults)から不正解の問題を復元
+                // 形式(oilyouFormId)も引き継ぐ必要があるため、ここが空だと動かなくなっていました
                 currentQuizData = quizAttemptResults
                     .filter(r => !r.isCorrect)
                     .map(r => ({ ...r.question, oilyouFormId: r.oilyouFormId, oilyouProgressText: r.oilyouProgressText }));
+            } else {
+                // 通常モード・読解モード等: IDリストから問題を復元
+                currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
             }
         } else if (isOilyouMode) {
+            // 語彙王モード（通常開始）
             loadOilyouProgress();
             const clearedStageWordIndexes = new Set();
             for (const testKey in playerData.testClears) {
@@ -2321,6 +2328,7 @@
                 oilyouProgressText: item.progressText
             }));
         } else if (isReadingComprehensionStage) {
+            // 読解ステージ（通常開始）
             let rawQuizData;
              if (isComprehensionReviewStage) {
                 const stageNumber = parseInt(stageId.split('-')[2]);
@@ -2366,6 +2374,7 @@
             });
             currentQuizData = shuffleArray(currentQuizData);
         } else if (isReviewStage) { 
+            // 復習ステージ
             const stageNumber = parseInt(stageId.split('-')[1]);
             const startIndex = (stageNumber - 1) * gameConfig.questionsPerReviewStage;
             const endIndex = startIndex + gameConfig.questionsPerReviewStage;
@@ -2373,6 +2382,7 @@
             currentQuizData = allQuizData.filter(q => reviewQuestionIds.includes(q.id));
             currentQuizData.sort((a, b) => reviewQuestionIds.indexOf(a.id) - reviewQuestionIds.indexOf(b.id));
         } else if (isTestMode) {
+            // テストモード
             const [_, startStageStr, endStageStr] = stageId.split('-');
             const startStage = parseInt(startStageStr);
             const endStage = parseInt(endStageStr);
@@ -2395,6 +2405,9 @@
             currentQuizData = allQuizData.slice(startIndex, endIndex);
         }
 
+        // ★修正: データの準備が終わったので、ここで今回の記録用変数を空っぽにします
+        quizAttemptResults = [];
+
         if (currentQuizData.length === 0 && isOilyouMode) {
             showCustomAlert('おめでとうございます！全ての単語をマスターしました！');
             return;
@@ -2414,7 +2427,7 @@
             loadQuestion();
         }, 500);
     }
-    
+        
     function loadQuestion() {
         quizContainer.removeEventListener('click', goToNextQuestion);
         if (currentQuestionIndex < currentQuizData.length) {
