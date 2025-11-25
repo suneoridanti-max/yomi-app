@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -15,7 +14,7 @@
             --light-gray: #e9ecef;
             --ruby-color: #ffc107; /* ルビーの色 */
             --sapphire-color: #007bff; /* サファイアの色 */
-            --emerald-color: #28a745; /* 修正: エメラルドの色を追加 */
+            --emerald-color: #28a745; /* エメラルドの色 */
             --true-diamond-color: #aaa; /* ダイヤの色 */
             --test-button-color: #6f42c1; /* テストボタンの色 */
             --review-button-color: #ff8c00; /* 復習ステージボタンの色 */
@@ -90,7 +89,6 @@
             font-size: 1.1em;
             font-weight: bold;
         }
-        /* 修正: エメラルド表示用のスタイルを追加 */
         #ruby-display, #sapphire-display, #emerald-display, #true-diamond-display {
             font-size: 1.1em;
             font-weight: bold;
@@ -113,7 +111,6 @@
             display: inline-block;
             text-shadow: 0 0 5px var(--sapphire-color);
         }
-        /* 修正: エメラルドのアイコンスタイルを追加 */
         #emerald-display::before {
             content: '🟢';
             margin-right: 8px;
@@ -179,7 +176,7 @@
         }
         .progress-bar-foreground {
             height: 100%;
-            width: 0%; /* JavaScriptで幅を操作します */
+            width: 0%;
             background: linear-gradient(to right, #76b852, #8DC26F);
             border-radius: 10px 0 0 10px;
             transition: width 0.5s ease-in-out;
@@ -211,7 +208,7 @@
             margin-top: 20px;
         }
         
-        #reading-comprehension-stage-container {
+        #reading-comprehension-stage-container, #normal-random-stage-container {
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -240,7 +237,7 @@
             font-size: 1em;
             cursor: pointer;
         }
-        #reading-comprehension-stage-button {
+        #reading-comprehension-stage-button, #normal-random-stage-button {
             width: 100%;
             max-width: 300px;
             margin-top: 10px;
@@ -493,7 +490,6 @@
         .gem-burst { position: absolute; font-size: 3em; animation: burst 1.5s ease-out forwards; }
         .gem-burst.ruby { color: var(--ruby-color); }
         .gem-burst.sapphire { color: var(--sapphire-color); }
-        /* 修正: エメラルドのアニメーションスタイルを追加 */
         .gem-burst.emerald { color: var(--emerald-color); }
         .gem-burst.trueDiamond { color: var(--true-diamond-color); }
 
@@ -507,7 +503,6 @@
         }
         #gem-gain-text.ruby { color: var(--ruby-color); }
         #gem-gain-text.sapphire { color: var(--sapphire-color); }
-        /* 修正: エメラルドのテキストスタイルを追加 */
         #gem-gain-text.emerald { color: var(--emerald-color); }
         #gem-gain-text.trueDiamond { color: var(--true-diamond-color); }
 
@@ -531,7 +526,6 @@
                 <div>
                     <p id="ruby-display" class="tier-1">0</p>
                     <p id="sapphire-display">0</p>
-                    <!-- 修正: エメラルド表示を追加 -->
                     <p id="emerald-display">0</p>
                     <p id="true-diamond-display">0</p>
                 </div>
@@ -567,6 +561,17 @@
 
             <h2>読解復習ステージ</h2>
             <div id="comprehension-review-stage-selection-grid"></div>
+
+            <h2>ランダム（通常）ステージ</h2>
+            <div id="normal-random-stage-container">
+                <div class="random-stage-controls">
+                    <label for="nr-start-stage">範囲:</label>
+                    <select id="nr-start-stage"></select>
+                    <span>〜</span>
+                    <select id="nr-end-stage"></select>
+                </div>
+                <button id="normal-random-stage-button" class="stage-button" style="background-color: #28a745;">挑戦！</button>
+            </div>
 
             <h2>ランダム（読解）ステージ</h2>
             <div id="reading-comprehension-stage-container">
@@ -636,7 +641,6 @@
     <script>
         // ===== 問題データ =====
         const allQuizData = [
-            // ... (問題データは変更なしのため省略) ...
 { "sentence": "伝説の生き物は、<u>幻</u>のように姿を現してはすぐに消えてしまうと言われている。", "sentence2": "疲れすぎて、目の前に<u>幻</u>が見えたような気がした。", "word_to_read": "幻", "correct_reading": "まぼろし", "meaning": "実際にはないのに、あるかのように見えるもの。または、すぐに消えてしまうはかないもののたとえ。", "choices": ["まぼろし", "げん", "ゆめ", "まこと", "うつつ"] },
 { "sentence": "大事な美術品が、<u>厳重</u>な警備のもとで展示されている。", "sentence2": "先生から、戸締りをするように<u>厳重</u>に注意された。", "word_to_read": "厳重", "correct_reading": "げんじゅう", "meaning": "とても厳しくて、手ぬかりがないこと。すみずみまで注意が行き届いている様子。", "choices": ["げんじゅう", "きびじゅう", "おごそかじゅう", "いかじゅう", "かたじゅう"] },
 { "sentence": "試合に負けた悔しさをバネに、次の大会に向けて<u>奮起</u>した。", "sentence2": "友達の応援を受けて、彼は<u>奮起</u>して勉強に励んだ。", "word_to_read": "奮起", "correct_reading": "ふんき", "meaning": "「やるぞ！」と心を奮い立たせること。勇気や元気を出すこと。", "choices": ["ふんき", "ふるいき", "ふるいき", "げきき", "おこき"] },
@@ -1562,7 +1566,7 @@
     const comprehensionReviewStageSelectionGrid = document.getElementById('comprehension-review-stage-selection-grid');
     const rubyDisplay = document.getElementById('ruby-display');
     const sapphireDisplay = document.getElementById('sapphire-display');
-    const emeraldDisplay = document.getElementById('emerald-display'); // 修正: エメラルド表示要素取得
+    const emeraldDisplay = document.getElementById('emerald-display');
     const trueDiamondDisplay = document.getElementById('true-diamond-display');
     const totalQuestionsDisplay = document.getElementById('total-questions-display');
     const gemAnimationContainer = document.getElementById('gem-animation-container');
@@ -1583,6 +1587,10 @@
     const rcEndStageSelect = document.getElementById('rc-end-stage');
     const goToOilyouModeButton = document.getElementById('go-to-oilyou-mode-button');
     const resultTitle = document.getElementById('result-title');
+    
+    const nrStartStageSelect = document.getElementById('nr-start-stage');
+    const nrEndStageSelect = document.getElementById('nr-end-stage');
+    const normalRandomStageButton = document.getElementById('normal-random-stage-button');
 
 
     // --- ゲーム設定 ---
@@ -1613,6 +1621,7 @@
     let isReadingComprehensionStage = false;
     let isComprehensionReviewStage = false;
     let isOilyouMode = false;
+    let isNormalRandomStage = false;
     let quizAttemptResults = [];
     
     const PROGRESS_STORAGE_KEY = 'kanjiYomiOilyouProgressData';
@@ -1757,7 +1766,6 @@
             if (typeof playerData.totalSapphires === 'undefined') {
                 playerData.totalSapphires = 0;
             }
-            // 修正: エメラルドの初期化
             if (typeof playerData.totalEmeralds === 'undefined') {
                 playerData.totalEmeralds = 0;
             }
@@ -1780,7 +1788,7 @@
             playerData = {
                 totalRubies: 0,
                 totalSapphires: 0,
-                totalEmeralds: 0, // 修正: エメラルドの初期化
+                totalEmeralds: 0,
                 totalTrueDiamonds: 0,
                 unlockedStage: gameConfig.initialUnlockedStages,
                 stageClears: {},
@@ -1826,7 +1834,6 @@
                         if (typeof importedData.totalSapphires === 'undefined') {
                             importedData.totalSapphires = 0;
                         }
-                        // 修正: インポートデータにエメラルドがない場合の処理
                         if (typeof importedData.totalEmeralds === 'undefined') {
                             importedData.totalEmeralds = 0;
                         }
@@ -1929,6 +1936,7 @@
         createComprehensionReviewStageButtons();
         createTestButtons();
         populateReadingComprehensionStageSelectors();
+        populateNormalRandomStageSelectors();
     }
 
     function showItemExchange() {
@@ -1945,11 +1953,11 @@
     function updateDisplays() {
         const totalRubies = playerData.totalRubies;
         const totalSapphires = playerData.totalSapphires;
-        const totalEmeralds = playerData.totalEmeralds || 0; // 修正: エメラルド表示
+        const totalEmeralds = playerData.totalEmeralds || 0;
         const totalTrueDiamonds = playerData.totalTrueDiamonds;
         rubyDisplay.textContent = totalRubies;
         sapphireDisplay.textContent = totalSapphires;
-        emeraldDisplay.textContent = totalEmeralds; // 修正: エメラルド表示更新
+        emeraldDisplay.textContent = totalEmeralds;
         trueDiamondDisplay.textContent = totalTrueDiamonds;
         totalQuestionsDisplay.textContent = `全${allQuizData.length}問 / ${gameConfig.totalStages}ステージ`;
         rubyDisplay.className = '';
@@ -1980,6 +1988,24 @@
             rcEndStageSelect.appendChild(endOption);
         }
         rcEndStageSelect.value = maxStage;
+    }
+
+    function populateNormalRandomStageSelectors() {
+        nrStartStageSelect.innerHTML = '';
+        nrEndStageSelect.innerHTML = '';
+        const maxStage = playerData.unlockedStage;
+        for (let i = 1; i <= maxStage; i++) {
+            const startOption = document.createElement('option');
+            startOption.value = i;
+            startOption.textContent = `ステージ ${i}`;
+            nrStartStageSelect.appendChild(startOption);
+
+            const endOption = document.createElement('option');
+            endOption.value = i;
+            endOption.textContent = `ステージ ${i}`;
+            nrEndStageSelect.appendChild(endOption);
+        }
+        nrEndStageSelect.value = maxStage;
     }
 
 
@@ -2275,14 +2301,12 @@
     }
 
     // --- クイズ進行 ---
-// --- クイズ進行 ---
     function startQuiz(stageId, retry = false) {
         isRetryMode = retry;
         currentStageId = stageId;
         score = 0;
         currentQuestionIndex = 0;
         incorrectQuestions = [];
-        // quizAttemptResults = []; // ★修正: ここでの初期化を削除しました（まだ消しちゃダメ！）
         isAnswered = false;
 
         isOilyouMode = stageId === 'oilyou';
@@ -2290,21 +2314,17 @@
         isReviewStage = stageId.startsWith('review-');
         isComprehensionReviewStage = stageId.startsWith('comprehension-review-');
         isReadingComprehensionStage = stageId.startsWith('reading-comprehension') || isComprehensionReviewStage;
+        isNormalRandomStage = stageId.startsWith('normal-random-');
 
         if (isRetryMode) {
-            // リトライモードの場合
             if (isOilyouMode) {
-                // 語彙王モード: 前回の結果(quizAttemptResults)から不正解の問題を復元
-                // 形式(oilyouFormId)も引き継ぐ必要があるため、ここが空だと動かなくなっていました
                 currentQuizData = quizAttemptResults
                     .filter(r => !r.isCorrect)
                     .map(r => ({ ...r.question, oilyouFormId: r.oilyouFormId, oilyouProgressText: r.oilyouProgressText }));
             } else {
-                // 通常モード・読解モード等: IDリストから問題を復元
                 currentQuizData = allQuizData.filter(q => incorrectQuestionsForRetry.includes(q.id));
             }
         } else if (isOilyouMode) {
-            // 語彙王モード（通常開始）
             loadOilyouProgress();
             const clearedStageWordIndexes = new Set();
             for (const testKey in playerData.testClears) {
@@ -2327,8 +2347,23 @@
                 oilyouFormId: item.formId,
                 oilyouProgressText: item.progressText
             }));
+
+        } else if (isNormalRandomStage) {
+            const parts = stageId.split('-');
+            const startStage = parseInt(parts[2]);
+            const endStage = parseInt(parts[3]);
+            let questionPool = [];
+            for (let i = startStage; i <= endStage; i++) {
+                const startIndex = (i - 1) * gameConfig.questionsPerStage;
+                const endIndex = startIndex + gameConfig.questionsPerStage;
+                if (startIndex < allQuizData.length) {
+                    questionPool.push(...allQuizData.slice(startIndex, endIndex));
+                }
+            }
+            // 15問抽出
+            currentQuizData = shuffleArray(questionPool).slice(0, 15);
+
         } else if (isReadingComprehensionStage) {
-            // 読解ステージ（通常開始）
             let rawQuizData;
              if (isComprehensionReviewStage) {
                 const stageNumber = parseInt(stageId.split('-')[2]);
@@ -2374,7 +2409,6 @@
             });
             currentQuizData = shuffleArray(currentQuizData);
         } else if (isReviewStage) { 
-            // 復習ステージ
             const stageNumber = parseInt(stageId.split('-')[1]);
             const startIndex = (stageNumber - 1) * gameConfig.questionsPerReviewStage;
             const endIndex = startIndex + gameConfig.questionsPerReviewStage;
@@ -2382,7 +2416,6 @@
             currentQuizData = allQuizData.filter(q => reviewQuestionIds.includes(q.id));
             currentQuizData.sort((a, b) => reviewQuestionIds.indexOf(a.id) - reviewQuestionIds.indexOf(b.id));
         } else if (isTestMode) {
-            // テストモード
             const [_, startStageStr, endStageStr] = stageId.split('-');
             const startStage = parseInt(startStageStr);
             const endStage = parseInt(endStageStr);
@@ -2405,7 +2438,6 @@
             currentQuizData = allQuizData.slice(startIndex, endIndex);
         }
 
-        // ★修正: データの準備が終わったので、ここで今回の記録用変数を空っぽにします
         quizAttemptResults = [];
 
         if (currentQuizData.length === 0 && isOilyouMode) {
@@ -2818,8 +2850,7 @@
         currentQuestionIndex++;
         loadQuestion();
     }
-    
-    // 修正: エメラルド獲得の共通関数
+
     function tryDropEmerald() {
         if (Math.random() < 0.1) { // 10%の確率
             const amount = 1;
@@ -2856,7 +2887,6 @@
                     showGemAnimation(gainedAmount, 'sapphire');
                     message += isRetryMode ? `🎉 見事クリア！サファイアを${gainedAmount}個獲得しました！ 🎉` : `🎉 全問正解！素晴らしい！サファイアを${gainedAmount}個獲得しました！ 🎉`;
                     
-                    // 修正: エメラルド獲得判定
                     if (tryDropEmerald()) {
                         message += `<br><strong>✨ すごい！レア宝石のエメラルドを1個発見したよ！ ✨</strong>`;
                     }
@@ -2871,6 +2901,7 @@
             retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
             allRetryButton.textContent = 'もう一度トレーニング';
             backToStageSelectButton.textContent = 'メインメニューへ戻る';
+
         } else if (isReadingComprehensionStage) {
             isPerfect = incorrectQuestionsForRetry.length === 0;
 
@@ -2899,7 +2930,6 @@
                     showGemAnimation(earnedAmount, gemType);
                     let message = isRetryMode ? `おめでとう！再挑戦で全問正解！サファイアを${earnedAmount}個獲得！` : `おめでとう！全問正解！サファイアを${earnedAmount}個獲得！`;
                     
-                    // 修正: エメラルド獲得判定
                     if (tryDropEmerald()) {
                         message += `\n✨ すごい！レア宝石のエメラルドを1個発見したよ！ ✨`;
                     }
@@ -2941,6 +2971,32 @@
             }
             retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
 
+        } else if (isNormalRandomStage) {
+            if (isPerfect) {
+                earnedAmount = 15;
+                gemType = 'sapphire';
+                playerData.totalSapphires += earnedAmount;
+                showGemAnimation(earnedAmount, gemType);
+                let message = isRetryMode ? `おめでとう！再挑戦で全問正解！サファイアを${earnedAmount}個獲得！` : `おめでとう！ランダムステージクリア！サファイアを${earnedAmount}個獲得！`;
+                
+                if (tryDropEmerald()) {
+                    message += `\n✨ すごい！レア宝石のエメラルドを1個発見したよ！ ✨`;
+                }
+                showCustomAlert(message);
+            } else {
+                const message = isRetryMode ? '再挑戦が終わったよ！' : 'ランダムステージが終わったよ！間違えた問題は復習ステージに追加されたよ！';
+                showCustomAlert(message);
+            }
+
+            if (!isRetryMode) {
+                incorrectQuestions.forEach(qId => {
+                    if (!playerData.reviewQuestions.includes(qId)) {
+                        playerData.reviewQuestions.push(qId);
+                    }
+                });
+            }
+            retryButton.classList.toggle('hidden', incorrectQuestionsForRetry.length === 0);
+
         } else {
             if (!isRetryMode) {
                 incorrectQuestions.forEach(qId => {
@@ -2965,7 +3021,6 @@
                         message = 'おめでとう！確認テストに合格したよ！';
                     }
                     
-                    // 修正: エメラルド獲得判定
                     if (tryDropEmerald()) {
                         message += `\n✨ すごい！レア宝石のエメラルドを1個発見したよ！ ✨`;
                     }
@@ -2976,7 +3031,7 @@
                     showCustomAlert('残念！確認テストは全問正解が必要だよ。もう一度挑戦してね！');
                 }
                 retryButton.classList.add('hidden');
-            } else { // 通常ステージ
+            } else {
                 gemType = 'ruby';
                 if (!isRetryMode && !isPerfect) {
                     showCustomAlert('ステージが終わったよ！間違えた問題に再挑戦してクリアするとルビーがもらえるよ！');
@@ -3000,7 +3055,6 @@
                             message = isRetryMode ? 'おめでとう！再挑戦で全問正解したよ！' : 'おめでとう！ステージクリア！';
                         }
 
-                        // 修正: エメラルド獲得判定
                         if (tryDropEmerald()) {
                             message += `\n✨ すごい！レア宝石のエメラルドを1個発見したよ！ ✨`;
                         }
@@ -3127,7 +3181,7 @@
         } else if (type === 'sapphire') {
             gemName = 'サファイア';
             gemChar = '🔵';
-        } else if (type === 'emerald') { // 修正: エメラルドのアニメーション設定
+        } else if (type === 'emerald') {
             gemName = 'エメラルド';
             gemChar = '🟢';
         } else if (type === 'trueDiamond') {
@@ -3202,6 +3256,25 @@
         document.getElementById('back-to-menu-from-exchange').addEventListener('click', showMainMenu);
         backToExchangeButton.addEventListener('click', showItemExchange);
         
+        normalRandomStageButton.addEventListener('click', () => {
+             const startStage = nrStartStageSelect.value;
+            const endStage = nrEndStageSelect.value;
+            if (parseInt(startStage) > parseInt(endStage)) {
+                 showCustomAlert('開始ステージは終了ステージより後のステージにできません。');
+                 return;
+            }
+            const stageId = `normal-random-${startStage}-${endStage}`;
+            startQuiz(stageId, false);
+        });
+
+        nrStartStageSelect.addEventListener('change', () => {
+            const startStage = parseInt(nrStartStageSelect.value);
+            const endStage = parseInt(nrEndStageSelect.value);
+            if (startStage > endStage) {
+                nrEndStageSelect.value = startStage;
+            }
+        });
+
         readingComprehensionStageButton.addEventListener('click', () => {
              const startStage = rcStartStageSelect.value;
             const endStage = rcEndStageSelect.value;
