@@ -479,6 +479,36 @@
             margin-left: 10px;
         }
 
+
+/* --- ここから追加 --- */
+        .item-card.category-card {
+            grid-column: span 2; /* カテゴリカードは少し幅広に */
+            background-color: #fff;
+            border: 2px solid var(--primary-color);
+        }
+        .item-select {
+            width: 100%;
+            padding: 8px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            cursor: pointer;
+            background-color: #fff;
+        }
+        .category-title {
+            font-weight: bold;
+            color: var(--primary-color);
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            width: 100%;
+            text-align: center;
+        }
+        /* --- ここまで追加 --- */
+
+
+
         /* ===== スピナー ===== */
         .spinner { border: 4px solid rgba(0, 0, 0, 0.1); width: 36px; height: 36px; border-radius: 50%; border-left-color: var(--primary-color); animation: spin 1s ease infinite; margin: 50px auto; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -2301,20 +2331,245 @@
     }
 
     // --- アイテム交換 ---
-    const exchangeItems = [
+// --- アイテム交換 ---
+    
+    // 1. 固定アイテム（カテゴリーに入らないもの）
+    const fixedItems = [
         { id: 'toca_life_1min', name: 'トッカライフワールド１分', cost: 100, currency: 'ruby', available: true },
         { id: 'tosochu_1book', name: '逃走中１冊', cost: 200, currency: 'sapphire', available: true },
         { id: 'foot_massage', name: '足裏マッサージ30秒', cost: 10, currency: 'ruby', available: true },
-        { id: 'preppy_pack_ruby', name: 'パーフェクトなプレッピースタイルパック', cost: 150, currency: 'ruby', available: true },
-        { id: 'preppy_pack_sapphire', name: '冬のホームパーティーパック', cost: 150, currency: 'sapphire', available: true },
         { id: 'uranai_book', name: '誕生日＆名前うらないＢＯＯＫ', cost: 150, currency: 'sapphire', available: true },
+        { id: 'kirishima_book', name: '霧島君はふつうじゃない １冊', cost: 200, currency: 'ruby', available: true },
+        { id: 'dangomushi_set', name: 'ダンゴムシ３匹セット（レア）', cost: 30, currency: 'ruby', available: true },
+        
+        // 特殊交換
+        { id: 'sapphire_to_emerald', name: 'サファイア100個を<br>エメラルド１個に交換', cost: 100, currency: 'sapphire', available: true, exchangeTo: 'emerald', exchangeAmount: 1 },
         { id: 'diamond_to_ruby', name: 'ダイヤ１個を<br>ルビー100個に交換', cost: 1, currency: 'trueDiamond', available: true, exchangeTo: 'ruby', exchangeAmount: 100 },
         { id: 'diamond_to_sapphire', name: 'ダイヤ１個を<br>サファイア100個に交換', cost: 1, currency: 'trueDiamond', available: true, exchangeTo: 'sapphire', exchangeAmount: 100 },
     ];
 
+    // 2. カテゴリーごとのアイテム定義
+    const categoryData = [
+        {
+            category: 'ホームデザイナー',
+            items: [
+                { name: '屋上ガーデン付きの小さな家', cost: 500 },
+                { name: 'ボヘミアンハウス', cost: 500 },
+                { name: 'ダウンタウンロフト', cost: 500 },
+                { name: '霧のコテージ', cost: 500 },
+                { name: 'ネオンレインボーアパート', cost: 500 },
+                { name: 'ロマンチックビーチハウス', cost: 500 },
+                { name: 'カエデ通りビル', cost: 500 },
+                { name: 'バケーションプールヴィラ', cost: 500 },
+                { name: 'ヤナギの木公園', cost: 500 },
+                { name: 'Y2Kロフト', cost: 500 },
+                { name: 'アットホームなレストラン', cost: 500 },
+                { name: '託児所 リトルボー', cost: 200 },
+                { name: '盆栽ビル', cost: 200 },
+                { name: 'くちばしストリートビル', cost: 200 }
+            ]
+        },
+        {
+            category: 'スタイルパック',
+            items: [
+                { name: 'シュガーピンクスタイルパック', cost: 500 },
+                { name: 'ベージュ・ベーシックスタイルパック', cost: 500 },
+                { name: 'Y2Kストロスタイルパック', cost: 500 },
+                { name: 'くつろぎ海岸スタイルパック', cost: 500 },
+                { name: '夜の豪華なお出かけスタイルパック', cost: 500 },
+                { name: '秋の到来スタイルパック', cost: 500 },
+                { name: 'リトルボースタイルパック', cost: 500 },
+                { name: 'パーフェクトなプレッピースタイルパック', cost: 500 }
+            ]
+        },
+        {
+            category: 'パック',
+            items: [
+                { name: 'ネオンピクセルパック', cost: 500 },
+                { name: '太陽のストリーマーパック', cost: 500 },
+                { name: 'クリエーションワークショップパック', cost: 500 },
+                { name: 'クリーピー家具パック', cost: 500 },
+                { name: '冬のホームパーティーパック', cost: 200 },
+                { name: '仲良し子グマの家具パック', cost: 200 },
+                { name: 'ヴィンテージ風家具パック', cost: 200 }
+            ]
+        },
+        {
+            category: 'OKストリート',
+            items: [
+                { name: '中央駅', cost: 500 },
+                { name: 'アパート', cost: 500 },
+                { name: 'クランペットのガラクタ置場', cost: 200 }
+            ]
+        },
+        {
+            category: 'ポンポン・ピーク',
+            items: [
+                { name: '歯医者さん', cost: 200 },
+                { name: '温泉', cost: 200 },
+                { name: 'アイススケート・ヴィレッジ', cost: 200 },
+                { name: '山小屋', cost: 200 },
+                { name: 'ポムポムプリン', cost: 200 },
+                { name: 'スキーリゾート', cost: 200 }
+            ]
+        },
+        {
+            category: 'ビジープラザ',
+            items: [
+                { name: '高級レストラン', cost: 500 },
+                { name: '裁判所', cost: 200 },
+                { name: 'ワンルームマンション', cost: 200 },
+                { name: 'デザインストア', cost: 200 }
+            ]
+        },
+        {
+            category: 'ビスケットタウン',
+            items: [
+                { name: 'ビストロレストラン', cost: 200 },
+                { name: '食料品店', cost: 200 },
+                { name: 'ペットショップ', cost: 200 },
+                { name: 'ペットパーク', cost: 200 },
+                { name: '動物病院', cost: 200 }
+            ]
+        },
+        {
+            category: 'チップトップ・トップス',
+            items: [
+                { name: '託児所', cost: 200 },
+                { name: '警察署', cost: 200 },
+                { name: '学校カフェテリア', cost: 200 },
+                { name: 'ユースクラブ', cost: 200 }
+            ]
+        },
+        {
+            category: 'ヴォックスバレー',
+            items: [
+                { name: '大学', cost: 500 },
+                { name: '野生の王国', cost: 200 }
+            ]
+        },
+        {
+            category: '朝の草原',
+            items: [
+                { name: 'ホーンテッドハウス', cost: 500 },
+                { name: '収穫祭', cost: 200 }
+            ]
+        }
+    ];
+
+    // 3. すべてのアイテムをまとめる配列（自動生成）
+    let exchangeItems = [...fixedItems];
+    
+    // カテゴリデータを展開してexchangeItemsに追加
+    categoryData.forEach(cat => {
+        cat.items.forEach((item, index) => {
+            exchangeItems.push({
+                id: `${cat.category}_${index}`,
+                name: item.name,
+                category: cat.category, // カテゴリ情報を付与
+                cost: item.cost,
+                currency: 'sapphire', // 基本はサファイア
+                available: true
+            });
+        });
+    });
+
+    // --- 表示用関数 ---
     function renderItemShop() {
         itemExchangeShop.innerHTML = '';
+        
+        // アイテムをカテゴリーごとに分類
+        const categories = {};
+        const singles = [];
+
         exchangeItems.forEach(item => {
+            if (item.category) {
+                if (!categories[item.category]) {
+                    categories[item.category] = [];
+                }
+                categories[item.category].push(item);
+            } else {
+                singles.push(item);
+            }
+        });
+
+        // 1. カテゴリーカードの生成（プルダウン形式）
+        for (const [categoryName, items] of Object.entries(categories)) {
+            const card = document.createElement('div');
+            card.classList.add('item-card', 'category-card');
+
+            // カテゴリー名
+            const title = document.createElement('div');
+            title.classList.add('category-title');
+            title.textContent = categoryName;
+            card.appendChild(title);
+
+            // プルダウンメニュー
+            const select = document.createElement('select');
+            select.classList.add('item-select');
+            items.forEach((item, index) => {
+                const option = document.createElement('option');
+                option.value = index;
+                // 通貨アイコン
+                let icon = '';
+                if (item.currency === 'ruby') icon = '🔴';
+                else if (item.currency === 'sapphire') icon = '🔵';
+                else if (item.currency === 'trueDiamond') icon = '💎';
+                
+                option.textContent = `${item.name} (${icon}${item.cost})`;
+                select.appendChild(option);
+            });
+            card.appendChild(select);
+
+            // コスト表示エリア
+            const itemCost = document.createElement('div');
+            itemCost.classList.add('item-cost');
+            card.appendChild(itemCost);
+
+            // 交換ボタン
+            const exchangeButton = document.createElement('button');
+            exchangeButton.classList.add('exchange-button');
+            exchangeButton.textContent = '交換する';
+            card.appendChild(exchangeButton);
+
+            // 選択変更時の更新処理
+            const updateCardState = () => {
+                const selectedIndex = select.value;
+                const selectedItem = items[selectedIndex];
+
+                // コスト表示更新
+                let icon = '';
+                if (selectedItem.currency === 'ruby') icon = '🔴';
+                else if (selectedItem.currency === 'sapphire') icon = '🔵';
+                else if (selectedItem.currency === 'trueDiamond') icon = '💎';
+                
+                itemCost.innerHTML = `必要: <span class="gem-icon">${icon}</span> ${selectedItem.cost}`;
+
+                // 所持金チェック
+                let playerCurrency = 0;
+                if (selectedItem.currency === 'ruby') playerCurrency = playerData.totalRubies;
+                else if (selectedItem.currency === 'sapphire') playerCurrency = playerData.totalSapphires;
+                else if (selectedItem.currency === 'trueDiamond') playerCurrency = playerData.totalTrueDiamonds;
+
+                if (playerCurrency >= selectedItem.cost) {
+                    exchangeButton.disabled = false;
+                    exchangeButton.onclick = () => exchangeItem(selectedItem.id);
+                    exchangeButton.textContent = '交換する';
+                } else {
+                    exchangeButton.disabled = true;
+                    exchangeButton.onclick = null;
+                    exchangeButton.textContent = 'ポイント不足';
+                }
+            };
+
+            select.addEventListener('change', updateCardState);
+            updateCardState(); // 初期状態の反映
+
+            itemExchangeShop.appendChild(card);
+        }
+
+        // 2. 単品アイテムカードの生成（従来通り）
+        singles.forEach(item => {
             const itemCard = document.createElement('div');
             itemCard.classList.add('item-card');
 
@@ -2324,15 +2579,13 @@
 
             const itemCost = document.createElement('div');
             itemCost.classList.add('item-cost');
+            
+            let icon = '';
+            if (item.currency === 'ruby') icon = '🔴';
+            else if (item.currency === 'sapphire') icon = '🔵';
+            else if (item.currency === 'trueDiamond') icon = '💎';
+            
             if (item.available) {
-                let icon = '';
-                if (item.currency === 'ruby') {
-                    icon = '🔴';
-                } else if (item.currency === 'sapphire') {
-                    icon = '🔵';
-                } else if (item.currency === 'trueDiamond') {
-                    icon = '💎';
-                }
                 itemCost.innerHTML = `<span class="gem-icon">${icon}</span> ${item.cost}`;
             } else {
                 itemCost.textContent = '-';
@@ -2340,16 +2593,19 @@
 
             const exchangeButton = document.createElement('button');
             exchangeButton.classList.add('exchange-button');
+            
+            let playerCurrency = 0;
+            if (item.currency === 'ruby') playerCurrency = playerData.totalRubies;
+            else if (item.currency === 'sapphire') playerCurrency = playerData.totalSapphires;
+            else if (item.currency === 'trueDiamond') playerCurrency = playerData.totalTrueDiamonds;
+
             if (item.available) {
-                exchangeButton.textContent = '交換する';
-                exchangeButton.onclick = () => exchangeItem(item.id);
-                
-                let playerCurrency = 0;
-                if (item.currency === 'ruby') playerCurrency = playerData.totalRubies;
-                else if (item.currency === 'sapphire') playerCurrency = playerData.totalSapphires;
-                else if (item.currency === 'trueDiamond') playerCurrency = playerData.totalTrueDiamonds;
-                
-                if (playerCurrency < item.cost) {
+                if (playerCurrency >= item.cost) {
+                    exchangeButton.textContent = '交換する';
+                    exchangeButton.disabled = false;
+                    exchangeButton.onclick = () => exchangeItem(item.id);
+                } else {
+                    exchangeButton.textContent = 'ポイント不足';
                     exchangeButton.disabled = true;
                 }
             } else {
@@ -2383,7 +2639,6 @@
         });
         exchangeHistoryList.appendChild(ul);
     }
-
     function exchangeItem(itemId) {
         const item = exchangeItems.find(i => i.id === itemId);
         if (!item) return;
@@ -2416,16 +2671,18 @@
 
                 let successMessage = `「${item.name.replace(/<br>/g, ' ')}」と交換しました！`;
 
-                if (item.exchangeTo && item.exchangeAmount) {
+if (item.exchangeTo && item.exchangeAmount) {
                     if (item.exchangeTo === 'ruby') {
                         playerData.totalRubies += item.exchangeAmount;
                         successMessage = `ダイヤ${item.cost}個をルビー${item.exchangeAmount}個に交換しました！`;
                     } else if (item.exchangeTo === 'sapphire') {
                         playerData.totalSapphires += item.exchangeAmount;
                         successMessage = `ダイヤ${item.cost}個をサファイア${item.exchangeAmount}個に交換しました！`;
+                    } else if (item.exchangeTo === 'emerald') { // ★ここを追加
+                        playerData.totalEmeralds = (playerData.totalEmeralds || 0) + item.exchangeAmount;
+                        successMessage = `サファイア${item.cost}個をエメラルド${item.exchangeAmount}個に交換しました！`;
                     }
                 }
-
                 playerData.exchangeHistory.push({
                     itemName: item.name.replace(/<br>/g, ' '),
                     date: new Date().toLocaleString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit' })
