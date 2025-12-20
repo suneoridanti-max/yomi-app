@@ -127,8 +127,8 @@
         }
         #ruby-display.tier-1::before { content: '🔴'; text-shadow: 0 0 5px var(--ruby-color); }
         #ruby-display.tier-2::before { content: '🟠'; text-shadow: 0 0 8px orange; }
-        #ruby-display.tier-3::before { content: '🟡'; text-shadow: 0 0 10px yellow; }
-        #ruby-display.tier-4::before { content: '🟢'; text-shadow: 0 0 12px lightgreen; transform: scale(1.2); }
+        #ruby-display.tier-3::before { content: '🔴'; text-shadow: 0 0 10px yellow; }
+        #ruby-display.tier-4::before { content: '🔴'; text-shadow: 0 0 12px lightgreen; transform: scale(1.2); }
 
         #main-menu-buttons {
             display: grid;
@@ -2330,7 +2330,6 @@
         }
     }
 
-    // --- アイテム交換 ---
 // --- アイテム交換 ---
     
     // 1. 固定アイテム（カテゴリーに入らないもの）
@@ -2343,7 +2342,8 @@
         { id: 'dangomushi_set', name: 'ダンゴムシ３匹セット（レア）', cost: 30, currency: 'ruby', available: true },
         
         // 特殊交換
-        { id: 'sapphire_to_emerald', name: 'サファイア100個を<br>エメラルド１個に交換', cost: 100, currency: 'sapphire', available: true, exchangeTo: 'emerald', exchangeAmount: 1 },
+        { id: 'emerald_to_sapphire', name: 'エメラルド１個を<br>サファイア100個に交換', cost: 1, currency: 'emerald', available: true, exchangeTo: 'sapphire', exchangeAmount: 100 },
+        
         { id: 'diamond_to_ruby', name: 'ダイヤ１個を<br>ルビー100個に交換', cost: 1, currency: 'trueDiamond', available: true, exchangeTo: 'ruby', exchangeAmount: 100 },
         { id: 'diamond_to_sapphire', name: 'ダイヤ１個を<br>サファイア100個に交換', cost: 1, currency: 'trueDiamond', available: true, exchangeTo: 'sapphire', exchangeAmount: 100 },
     ];
@@ -2515,6 +2515,7 @@
                 if (item.currency === 'ruby') icon = '🔴';
                 else if (item.currency === 'sapphire') icon = '🔵';
                 else if (item.currency === 'trueDiamond') icon = '💎';
+                else if (item.currency === 'emerald') icon = '🟢';
                 
                 option.textContent = `${item.name} (${icon}${item.cost})`;
                 select.appendChild(option);
@@ -2542,6 +2543,7 @@
                 if (selectedItem.currency === 'ruby') icon = '🔴';
                 else if (selectedItem.currency === 'sapphire') icon = '🔵';
                 else if (selectedItem.currency === 'trueDiamond') icon = '💎';
+                else if (selectedItem.currency === 'emerald') icon = '🟢';
                 
                 itemCost.innerHTML = `必要: <span class="gem-icon">${icon}</span> ${selectedItem.cost}`;
 
@@ -2550,6 +2552,7 @@
                 if (selectedItem.currency === 'ruby') playerCurrency = playerData.totalRubies;
                 else if (selectedItem.currency === 'sapphire') playerCurrency = playerData.totalSapphires;
                 else if (selectedItem.currency === 'trueDiamond') playerCurrency = playerData.totalTrueDiamonds;
+                else if (selectedItem.currency === 'emerald') playerCurrency = playerData.totalEmeralds || 0;
 
                 if (playerCurrency >= selectedItem.cost) {
                     exchangeButton.disabled = false;
@@ -2584,6 +2587,7 @@
             if (item.currency === 'ruby') icon = '🔴';
             else if (item.currency === 'sapphire') icon = '🔵';
             else if (item.currency === 'trueDiamond') icon = '💎';
+            else if (item.currency === 'emerald') icon = '🟢';
             
             if (item.available) {
                 itemCost.innerHTML = `<span class="gem-icon">${icon}</span> ${item.cost}`;
@@ -2598,6 +2602,7 @@
             if (item.currency === 'ruby') playerCurrency = playerData.totalRubies;
             else if (item.currency === 'sapphire') playerCurrency = playerData.totalSapphires;
             else if (item.currency === 'trueDiamond') playerCurrency = playerData.totalTrueDiamonds;
+            else if (item.currency === 'emerald') playerCurrency = playerData.totalEmeralds || 0;
 
             if (item.available) {
                 if (playerCurrency >= item.cost) {
@@ -2619,7 +2624,6 @@
             itemExchangeShop.appendChild(itemCard);
         });
     }
-
     function renderExchangeHistory() {
         exchangeHistoryList.innerHTML = '';
         if (playerData.exchangeHistory.length === 0) {
