@@ -2643,7 +2643,8 @@
         });
         exchangeHistoryList.appendChild(ul);
     }
-    function exchangeItem(itemId) {
+
+   function exchangeItem(itemId) {
         const item = exchangeItems.find(i => i.id === itemId);
         if (!item) return;
 
@@ -2663,6 +2664,10 @@
             playerCurrency = playerData.totalTrueDiamonds;
             currencyName = 'ダイヤ';
             currencyKey = 'totalTrueDiamonds';
+        } else if (item.currency === 'emerald') { // ★ここを追加修正: エメラルドの処理を追加
+            playerCurrency = playerData.totalEmeralds || 0;
+            currencyName = 'エメラルド';
+            currencyKey = 'totalEmeralds';
         }
 
         if (playerCurrency >= item.cost) {
@@ -2675,16 +2680,16 @@
 
                 let successMessage = `「${item.name.replace(/<br>/g, ' ')}」と交換しました！`;
 
-if (item.exchangeTo && item.exchangeAmount) {
+                if (item.exchangeTo && item.exchangeAmount) {
                     if (item.exchangeTo === 'ruby') {
                         playerData.totalRubies += item.exchangeAmount;
-                        successMessage = `ダイヤ${item.cost}個をルビー${item.exchangeAmount}個に交換しました！`;
+                        successMessage = `${currencyName}${item.cost}個をルビー${item.exchangeAmount}個に交換しました！`;
                     } else if (item.exchangeTo === 'sapphire') {
                         playerData.totalSapphires += item.exchangeAmount;
-                        successMessage = `ダイヤ${item.cost}個をサファイア${item.exchangeAmount}個に交換しました！`;
-                    } else if (item.exchangeTo === 'emerald') { // ★ここを追加
+                        successMessage = `${currencyName}${item.cost}個をサファイア${item.exchangeAmount}個に交換しました！`;
+                    } else if (item.exchangeTo === 'emerald') {
                         playerData.totalEmeralds = (playerData.totalEmeralds || 0) + item.exchangeAmount;
-                        successMessage = `サファイア${item.cost}個をエメラルド${item.exchangeAmount}個に交換しました！`;
+                        successMessage = `${currencyName}${item.cost}個をエメラルド${item.exchangeAmount}個に交換しました！`;
                     }
                 }
                 playerData.exchangeHistory.push({
@@ -2701,7 +2706,7 @@ if (item.exchangeTo && item.exchangeAmount) {
             showCustomAlert(`${currencyName}が足りません。`);
         }
     }
-
+    
     // --- クイズ進行 ---
     function startQuiz(stageId, retry = false) {
         isRetryMode = retry;
